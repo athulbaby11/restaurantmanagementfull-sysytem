@@ -1,0 +1,68 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-5 col-lg-4">
+			<div class="card shadow">
+				<div class="card-body">
+					<h6 class="mb-3 text-center" style="font-size:1rem;">Book a Table</h6>
+					{% if success %}
+						<div class="alert alert-success">
+							Booking successful!<br>
+							We can hold your reservation for only 20 minutes from your booked time. If you need more time, please call and inform us.
+						</div>
+					{% endif %}
+					<form method="post">
+						{% if errors %}
+							<div class="alert alert-danger">
+								<ul class="mb-0">
+								{% for field, error in errors.items %}
+									<li>{{ error }}</li>
+								{% endfor %}
+								</ul>
+							</div>
+						{% endif %}
+						{% csrf_token %}
+						<div class="mb-3">
+							<label for="name" class="form-label">Name</label>
+							<input type="text" class="form-control" id="name" name="name" required value="{{ name|default:'' }}">
+						</div>
+						<div class="mb-3">
+							<label for="phone" class="form-label">Phone</label>
+							<input type="tel" class="form-control" id="phone" name="phone" required pattern="[0-9]{10}" minlength="10" maxlength="10" title="Enter a 10-digit phone number" value="{{ phone|default:'' }}">
+						</div>
+						<div class="mb-3">
+							<label for="email" class="form-label">Email</label>
+							<input type="email" class="form-control" id="email" name="email" required value="{{ email|default:'' }}">
+						</div>
+						<div class="mb-3">
+							<label for="guests" class="form-label">No. of Guests</label>
+							<input type="number" class="form-control" id="guests" name="guests" min="1" required value="{{ guests|default:'' }}">
+						</div>
+						<div class="mb-3 row">
+							<div class="col-6">
+								<label for="date" class="form-label">Date</label>
+								<input type="date" class="form-control form-control-sm" id="date" name="date" required value="{{ date|default:'' }}" min="{{ today|default:'' }}">
+							</div>
+							<div class="col-6">
+								<label for="time" class="form-label">Time</label>
+								<input type="time" class="form-control form-control-sm" id="time" name="time" required value="{{ time|default:'' }}">
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="message" class="form-label">Message (max 50 words)</label>
+							<textarea class="form-control" id="message" name="message" rows="3" maxlength="350" placeholder="Enter your message (max 50 words)" required>{{ message|default:'' }}</textarea>
+						</div> 
+						<button type="submit" class="btn btn-primary w-100" style="font-size:0.9rem; padding:0.5rem 0;">Book Now</button>
+						<p class="mt-3 mb-0 small text-muted text-center">
+							Note: We can hold your reservation for only 20 minutes from your booked time. If you need more time, please call and inform us.
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include 'footer.html' %}

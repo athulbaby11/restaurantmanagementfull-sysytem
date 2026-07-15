@@ -1,0 +1,120 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row mb-3">
+		<div class="col-4 d-flex justify-content-start">
+			<a href="{% url 'cheforder_request' %}" class="btn btn-warning">Order Request</a>
+		</div>
+		<div class="col-4 d-flex justify-content-center">
+			<a href="{% url 'chef_dashboard' %}" class="btn btn-primary">Dashboard</a>
+		</div>
+		<div class="col-4 d-flex justify-content-end">
+			<a href="{% url 'chef_completed_orders' %}" class="btn btn-success">Complete Order</a>
+		</div>
+	</div>
+	<h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#f39c12;">Order Preparing</h2>
+	<table class="table table-bordered table-hover">
+		<thead class="table-light">
+			<tr>
+				<th>Order ID</th>
+				<th>Table Number</th>
+				<th>Items</th>
+				<th>Quantity</th>
+				<th>Placed Date/Time</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for order in orders %}
+			<tr>
+				<td>{{ order.id }}</td>
+				<td>{{ order.table_number }}</td>
+				<td>
+					<ul class="mb-0">
+						{% for item in order.items.all %}
+						<li>{{ item.name }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+				<td>
+					<ul class="mb-0">
+						{% for item in order.items.all %}
+						<li>{{ item.qty }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+				<td>{{ order.created_at|date:'Y-m-d H:i' }}</td>
+				   <td>
+					   {% comment %} <a href="{% url 'chef_completed_orders' %}" class="btn btn-warning btn-sm">preparing</a> {% endcomment %}
+					   <form method="post" action="{% url 'cheforder_deliver' order.id %}" style="display:inline;">
+						   {% csrf_token %}
+						   <button type="submit" class="btn btn-success btn-sm ms-2">Delivered</button>
+					   </form>
+					   <button class="btn btn-outline-secondary btn-sm print-btn" onclick="printOrderRow(this)">Print</button>
+				   </td>
+			</tr>
+			{% if order.status == 'Delivered' %}
+			<td>
+				<span class="badge bg-info">Ready to delivery</span>
+			</td>
+			{% endif %}
+			{% empty %}
+			<tr><td colspan="6" class="text-center">No preparing orders found.</td></tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="position-absolute" style="top: 20px; right: 20px; display: flex; gap: 8px;">
+		<a href="javascript:history.back()" class="btn btn-warning btn-sm">Back</a>
+		<a href="{% url 'cheforder_request' %}" class="btn btn-warning btn-sm">Order Request</a>
+	</div>
+</div>
+
+<style>
+@media print {
+	.print-btn, .btn, .position-absolute, header, footer {
+		display: none !important;
+	}
+	body * {
+		visibility: hidden;
+	}
+	.print-area, .print-area * {
+		visibility: visible;
+	}
+	.print-area {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+	}
+}
+</style>
+<script>
+function printOrderRow(btn) {
+	var row = btn.closest('tr');
+	var table = document.createElement('table');
+	table.className = 'table table-bordered';
+	var thead = document.querySelector('thead').cloneNode(true);
+	table.appendChild(thead);
+	var tbody = document.createElement('tbody');
+	var cloneRow = row.cloneNode(true);
+	// Remove print button from cloned row
+	var printBtn = cloneRow.querySelector('.print-btn');
+	if (printBtn) printBtn.remove();
+	cloneRow.classList.add('print-area');
+	tbody.appendChild(cloneRow);
+	table.appendChild(tbody);
+	var printWindow = window.open('', '', 'height=600,width=800');
+	printWindow.document.write('<html><head><title>Order Print</title>');
+	printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+	printWindow.document.write('<style>@media print { .print-btn, .btn { display: none !important; } }</style>');
+	printWindow.document.write('</head><body>');
+	printWindow.document.write(table.outerHTML);
+	printWindow.document.write('</body></html>');
+	printWindow.document.close();
+	printWindow.focus();
+	printWindow.print();
+	printWindow.close();
+}
+</script>
+{% include 'footer.html' %}

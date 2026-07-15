@@ -1,0 +1,94 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow">
+				<div class="card-body">
+					<h3 class="mb-4 text-center">Add Subcategory Item</h3>
+					<form method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="mb-3">
+							<label for="main_category" class="form-label">Main Category</label>
+							<select class="form-control" id="main_category" name="main_category" required>
+								<option value="">Select Main Category</option>
+								{% for main in main_categories %}
+									<option value="{{ main.id }}">{{ main.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="category" class="form-label">Category</label>
+							<select class="form-control" id="category" name="category" required>
+								<option value="">Select Category</option>
+								{% for cat in categories %}
+									<option value="{{ cat.id }}">{{ cat.name }}</option>
+								{% endfor %}
+								<!-- Categories will be loaded dynamically -->
+							{% comment %} <script>
+							document.addEventListener('DOMContentLoaded', function() {
+								const mainCatSelect = document.getElementById('main_category');
+								const catSelect = document.getElementById('category');
+								mainCatSelect.addEventListener('change', function() {
+									const mainCatId = this.value;
+									catSelect.innerHTML = '<option value="">Loading categories...</option>';
+									if (mainCatId) {
+										fetch("{% url 'get_categories_by_main' %}?main_category_id=" + mainCatId)
+											.then(response => response.json())
+											.then(data => {
+												catSelect.innerHTML = '<option value="">Select Category</option>';
+												data.categories.forEach(function(cat) {
+													const option = document.createElement('option');
+													option.value = cat.id;
+													option.textContent = cat.name;
+													catSelect.appendChild(option);
+												});
+											});
+									} else {
+										catSelect.innerHTML = '<option value="">Select Category</option>';
+									}
+								});
+							}); {% endcomment %}
+						
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="item_name" class="form-label">Item Name</label>
+							<input type="text" class="form-control" id="item_name" name="subcategory_name" required oninput="capitalizeFirstLetter(this)">
+						{% comment %} <script>
+						function capitalizeFirstLetter(input) {
+							if (input.value.length > 0) {
+								input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+							}
+						}
+						</script> {% endcomment %}
+						</div>
+						<div class="mb-3">
+							<label for="item_image" class="form-label">Item Image (optional)</label>
+							<input type="file" class="form-control" id="item_image" name="subcategory_image" accept="image/*">
+						</div>
+						<div class="mb-3">
+							<label for="item_price" class="form-label">Item Price</label>
+							<input type="number" step="0.01" class="form-control" id="item_price" name="subcategory_price" required>
+						</div>
+						<div class="mb-3">
+							<label for="offer_price" class="form-label">Offer Price (optional)</label>
+							<input type="number" step="0.01" class="form-control" id="offer_price" name="offer_price">
+						</div>
+						<div class="mb-3">
+							<label for="description" class="form-label">Description (max 60 words)</label>
+							<textarea class="form-control" id="description" name="description" rows="3" maxlength="420" placeholder="Enter description (max 60 words)"></textarea>
+						</div>
+						<button type="submit" class="btn btn-primary w-100">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include 'footer.html' %}
+
+

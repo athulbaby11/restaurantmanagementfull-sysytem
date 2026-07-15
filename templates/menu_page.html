@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_tags %}
+{% block content %}
+{% include 'header.html' %}
+<section id="menuList" class="section order-layout">
+    <div class="container-fluid mt-4">
+        {% if table_number %}
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <h3>Table Number: <span class="badge bg-success fs-4">{{ table_number }}</span></h3>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="row d-block d-md-flex">
+                <!-- Main Category Sidebar -->
+                <nav class="mb-3 mb-md-0 col-12 col-md-2 stylish-maincat animate__animated animate__fadeInLeft" style="box-shadow:0 4px 24px rgba(0,0,0,0.18);">
+                    <div class="list-group w-100" id="mainCategoryList">
+                        {% for main in main_categories %}
+                            <button type="button"
+                                    class="list-group-item list-group-item-action main-category-btn animate__animated animate__fadeInUp"
+                                    data-main-id="{{ main.id }}"
+                                    style="margin-bottom:8px; box-shadow:0 2px 8px rgba(230,126,34,0.07);">
+                                {{ main.name }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </nav>
+
+                <!-- Category Sidebar -->
+                <aside class="mb-3 mb-md-0 col-12 col-md-2 stylish-cat animate__animated animate__fadeInUp" style="box-shadow:0 4px 24px rgba(44,62,80,0.10);">
+                    <div class="list-group w-100" id="categoryList">
+                        {% for cat in categories %}
+                            <button type="button"
+                                    class="list-group-item list-group-item-action category-btn animate__animated animate__fadeInUp"
+                                    data-cat-id="{{ cat.id }}"
+                                    data-main-id="{{ cat.main_category.id }}"
+                                    style="display:none; margin-bottom:8px; box-shadow:0 2px 8px rgba(44,62,80,0.07);">
+                                {{ cat.name }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </aside>
+
+                <!-- Subcategory Items Content -->
+                <main class="col-12 col-md-8 stylish-subcat animate__animated animate__fadeInRight" style="box-shadow:0 4px 24px rgba(44,62,80,0.08);">
+                    {% if not request.session.user and not request.session.name %}
+                    <div class="mb-3 text-center">
+                        <h5 class="mb-0">Menu Items</h5>
+                    </div>
+                    {% else %}
+                    <div class="mb-3 d-flex justify-content-end align-items-center">
+                        <input type="text" id="foodSearch" class="form-control me-2 stylish-search animate__animated animate__fadeIn" style="max-width: 250px;" placeholder="Search food...">
+                        <button class="btn btn-outline-primary stylish-search-btn animate__animated animate__fadeIn" id="searchBtn" type="button">Search</button>
+                    </div>
+                    {% endif %}
+                    <div class="row" id="subcategoryItems">
+                        {% for subcat in subcategories %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 subcat-card animate__animated animate__zoomIn" data-cat-id="{{ subcat.category.id }}" style="display:none;">
+                                <div class="card h-100 shadow-lg border-0 rounded-4 food-card-hover position-relative stylish-card subcategory-card">
+                                    {% if not request.session.user and not request.session.name %}
+                                    <div class="card-body d-flex flex-column p-3 stylish-body">
+                                        <h6 class="card-title text-center mb-2 stylish-title">{{ subcat.name }}</h6>
+                                        <p class="text-muted small mb-2 stylish-desc">{{ subcat.description|default:'No description.' }}</p>
+                                    </div>
+                                    {% else %}
+                                    {% if subcat.offer_price %}
+                                        <span class="badge bg-gradient bg-danger position-absolute top-0 end-0 m-2 stylish-offer">Offer</span>
+                                    {% endif %}
+                                    {% if subcat.image %}
+                                        <img src="{{ subcat.image.url }}" class="card-img-top food-img rounded-top stylish-img" alt="{{ subcat.name }}" style="width:100%;height:180px;object-fit:cover;" />
+                                    {% else %}
+                                        <img src="{% static 'image/default_food.png' %}" class="card-img-top food-img rounded-top stylish-img" alt="No Image" style="width:100%;height:180px;object-fit:cover;" />
+                                    {% endif %}
+                                    <div class="card-body d-flex flex-column p-3 stylish-body">
+                                        <h6 class="card-title text-center mb-2 stylish-title">{{ subcat.name }}</h6>
+                                        <div class="mb-2 text-center stylish-price">
+                                            {% with currency=request.session.currency|default:'GBP' %}
+                                            {% if subcat.offer_price %}
+                                                <span class="text-decoration-line-through text-secondary">{{ subcat.price|money:currency }}</span>
+                                                <span class="text-success fw-bold ms-2 stylish-offer-price">{{ subcat.offer_price|money:currency }}</span>
+                                            {% else %}
+                                                <span class="fw-bold stylish-main-price">{{ subcat.price|money:currency }}</span>
+                                            {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                        <hr class="my-2 stylish-hr">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            <label class="me-2 mb-0">Qty:</label>
+                                            <div class="input-group input-group-sm stylish-qty-group" style="width:110px;">
+                                                <button class="btn btn-outline-secondary qty-btn" type="button">&#8722;</button>
+                                                <input type="number" min="1" value="1" class="form-control text-center qty-input" style="width:50px;">
+                                                <button class="btn btn-outline-secondary qty-btn" type="button">&#43;</button>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2 stylish-desc">{{ subcat.description|default:'No description.' }}</p>
+                                        <form method="post" action="{% if table_number %}{% url 'add_to_team_cart' %}{% else %}{% url 'add_to_user_cart' %}{% endif %}" class="w-100 mt-auto stylish-cart-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="subcat_id" value="{{ subcat.id }}">
+                                            <input type="hidden" name="qty" class="cart-qty-input" value="1">
+                                            {% if table_number %}
+                                            <input type="hidden" name="table_number" value="{{ table_number }}">
+                                            {% endif %}
+                                            <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill stylish-add-cart">
+                                                <i class="bi bi-cart-plus me-1"></i> Add To Cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </main>
+            </div>
+        </div>
+</section>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity up/down button logic and sync with form
+        document.querySelectorAll('.subcat-card').forEach(function(card) {
+            const minusBtn = card.querySelectorAll('.qty-btn')[0];
+            const plusBtn = card.querySelectorAll('.qty-btn')[1];
+            const qtyInput = card.querySelector('.qty-input');
+            const formQtyInput = card.querySelector('.cart-qty-input');
+            minusBtn.onclick = function() {
+                let val = parseInt(qtyInput.value) || 1;
+                if (val > 1) qtyInput.value = val - 1;
+                if (formQtyInput) formQtyInput.value = qtyInput.value;
+            };
+            plusBtn.onclick = function() {
+                let val = parseInt(qtyInput.value) || 1;
+                qtyInput.value = val + 1;
+                if (formQtyInput) formQtyInput.value = qtyInput.value;
+            };
+            qtyInput.addEventListener('input', function() {
+                if (formQtyInput) formQtyInput.value = qtyInput.value;
+            });
+        });
+        // Food search functionality
+        const searchBtn = document.getElementById('searchBtn');
+        if (searchBtn) {
+            searchBtn.onclick = function() {
+                const query = document.getElementById('foodSearch').value.trim().toLowerCase();
+                document.querySelectorAll('.subcat-card').forEach(card => {
+                    const name = card.querySelector('.card-title').textContent.trim().toLowerCase();
+                    if (!query || name.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            };
+            document.getElementById('foodSearch').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    searchBtn.click();
+                }
+            });
+        }
+        // Show categories for selected main category
+        document.querySelectorAll('.main-category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.main-category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const mainId = this.dataset.mainId;
+                document.querySelectorAll('.category-btn').forEach(catBtn => {
+                    if (catBtn.dataset.mainId === mainId) {
+                        catBtn.style.display = '';
+                    } else {
+                        catBtn.style.display = 'none';
+                        catBtn.classList.remove('active');
+                    }
+                });
+                // Show subcategories for the first visible category
+                let firstCat = null;
+                document.querySelectorAll('.category-btn').forEach(catBtn => {
+                    if (catBtn.style.display !== 'none' && !firstCat) {
+                        firstCat = catBtn;
+                    }
+                });
+                if (firstCat) {
+                    firstCat.click();
+                } else {
+                    // If no category, hide all subcategories
+                    document.querySelectorAll('.subcat-card').forEach(card => card.style.display = 'none');
+                }
+            });
+        });
+        // Show subcategories for selected category
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const catId = this.dataset.catId;
+                let anyVisible = false;
+                document.querySelectorAll('.subcat-card').forEach(card => {
+                    if (card.dataset.catId === catId) {
+                        card.style.display = '';
+                        anyVisible = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                // If no subcategories for this category, show a message
+                if (!anyVisible) {
+                    if (!document.getElementById('noItemsMsg')) {
+                        const msg = document.createElement('div');
+                        msg.id = 'noItemsMsg';
+                        msg.className = 'alert alert-warning mt-3';
+                        msg.innerText = 'No items available in this category.';
+                        document.getElementById('subcategoryItems').appendChild(msg);
+                    }
+                } else {
+                    const msg = document.getElementById('noItemsMsg');
+                    if (msg) msg.remove();
+                }
+            });
+        });
+        // Optionally: auto-select first main category on load
+        const firstMain = document.querySelector('.main-category-btn');
+        if (firstMain) firstMain.click();
+    });
+</script>
+<style>
+    #menuList, #menuList * {
+        color: #fff !important;
+    }
+    .main-category-btn,
+    .category-btn {
+        transition: all 0.2s ease;
+    }
+    .main-category-btn:hover,
+    .main-category-btn.active,
+    .category-btn:hover,
+    .category-btn.active {
+        background-color: rgba(13, 110, 253, 0.18) !important;
+        border-color: #0d6efd !important;
+        color: #0d6efd !important;
+    }
+    #noItemsMsg {
+        background: rgba(13, 110, 253, 0.14) !important;
+        border-color: rgba(13, 110, 253, 0.45) !important;
+        color: #0d6efd !important;
+    }
+    .stylish-maincat {
+        background: #222 !important;
+        color: #fff !important;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    }
+    .stylish-maincat .list-group-item {
+        color: #fff !important;
+        background: transparent !important;
+        border-color: #fff !important;
+    }
+    .qty-input {
+        color: #222 !important;
+        background: #121111 !important;
+        border-color: #fff !important;
+        font-weight: bold;
+    }
+</style>
+{% include 'footer.html' %}
+{% endblock %}

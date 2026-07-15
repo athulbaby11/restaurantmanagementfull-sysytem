@@ -1,0 +1,22 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h2 class="mb-4">Add News</h2>
+    {% if success %}
+        <div class="alert alert-success">News item added successfully.</div>
+    {% endif %}
+    <form method="post" class="card p-4 shadow-sm" style="max-width:500px;margin:auto;">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="4" placeholder="Enter news content" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add News</button>
+        <a href="{% url 'admin_news_list' %}" class="btn btn-secondary ms-2">Back to News</a>
+    </form>
+</div>
+{% include 'footer.html' %}

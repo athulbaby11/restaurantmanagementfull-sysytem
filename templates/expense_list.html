@@ -1,0 +1,143 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#e67e22;">All Expenses</h2>
+    <div class="mb-4" style="max-width:600px;margin:auto;">
+        <form method="get" class="d-flex gap-2 align-items-center justify-content-center flex-wrap">
+            <label for="filter" class="fw-bold">Show:</label>
+            <select name="filter" id="filter" class="form-select" style="max-width:180px;">
+                <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All</option>
+                <option value="daily" {% if filter_type == 'daily' %}selected{% endif %}>Daily</option>
+                <option value="weekly" {% if filter_type == 'weekly' %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if filter_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                <option value="3months" {% if filter_type == '3months' %}selected{% endif %}>Last 3 Months</option>
+                <option value="6months" {% if filter_type == '6months' %}selected{% endif %}>Last 6 Months</option>
+            </select>
+            <span class="fw-bold ms-3">Or</span>
+            <label for="start_date" class="fw-bold ms-2">From:</label>
+            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}">
+            <label for="end_date" class="fw-bold ms-2">To:</label>
+            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}">
+            <button type="submit" class="btn btn-primary">Apply</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print()">Print</button>
+        </form>
+    </div>
+    <div class="print-header">
+        {% if filter_type == 'custom' and start_date and end_date %}
+            Showing expenses from {{ start_date|date:'d-m-Y' }} to {{ end_date|date:'d-m-Y' }}
+        {% elif filter_type == 'daily' %}
+            Showing expenses for {{ expenses.0.date|date:'d-m-Y' }}
+        {% elif filter_type == 'weekly' %}
+            Showing expenses for last 7 days (up to {{ expenses.0.date|date:'d-m-Y' }})
+        {% elif filter_type == 'monthly' %}
+            Showing expenses for {{ expenses.0.date|date:'F Y' }}
+        {% elif filter_type == '3months' %}
+            Showing expenses for last 3 months
+        {% elif filter_type == '6months' %}
+            Showing expenses for last 6 months
+        {% else %}
+            Showing all expenses
+        {% endif %}
+    </div>
+    <table class="table table-bordered table-hover expense-table">
+        <thead class="table-light">
+            <tr>
+                <th>Sl. No</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Payment Method</th>
+                <th>Notes</th>
+                <th>Amount</th>
+                <th>Bill</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td class="serial-boost">{{ forloop.counter }}</td>
+                <td>{{ expense.name }}</td>
+                <td>{{ expense.category }}</td>
+                <td>{{ expense.date|date:'d-m-Y' }}</td>
+                <td>{{ expense.payment_method }}</td>
+                <td>{{ expense.notes }}</td>
+                <td>£{{ expense.amount|floatformat:2 }}</td>
+                <td>
+                    {% if expense.bill %}
+                        <a href="{{ expense.bill.url }}" target="_blank" class="btn btn-sm btn-info">View Bill</a>
+                    {% else %}
+                        <span style="color:#aaa;">No Bill</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'expense_update' expense.id %}" class="btn btn-sm btn-warning">Update</a>
+                    <a href="{% url 'expense_delete' expense.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center py-5">
+                    <div style="color:#aaa; font-size:1.3rem;">
+                        No expenses found.
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background:#fff3e0; font-weight:700;">
+                <td colspan="6" class="text-end">Total Amount</td>
+                <td colspan="3">£{{ total_amount|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="position-absolute" style="top: 20px; right: 20px; display: flex; gap: 8px;">
+        <a href="javascript:history.back()" class="btn btn-warning btn-sm">Back</a>
+    </div>
+</div>
+<style>
+.expense-table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(230,126,34,0.08);
+    background: linear-gradient(135deg, #fff3e0 0%, #fbeee6 100%);
+}
+.expense-table th {
+    background: linear-gradient(90deg, #e67e22 60%, #f1c40f 100%);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+    border: none;
+}
+.expense-table td {
+    background: #fff;
+    font-size: 1rem;
+    border: none;
+    vertical-align: middle;
+}
+.expense-table tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+.expense-table tr:last-child {
+    border-bottom: none;
+}
+.expense-table .serial-boost {
+    background: linear-gradient(90deg, #e67e22 60%, #f1c40f 100%);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 2px 10px;
+    box-shadow: 0 2px 8px rgba(230,126,34,0.08);
+}
+</style>
+<style>
+@media print {
+    form, .mb-4, .btn, .position-absolute, .alert { display: none !important; }
+    .print-header { display: block !important; }
+}
+.print-header { display: none; font-size:1.2rem; font-weight:700; margin-bottom:16px; text-align:center; }
+</style>
+{% include 'footer.html' %}

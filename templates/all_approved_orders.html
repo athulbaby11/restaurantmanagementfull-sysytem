@@ -1,0 +1,41 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="mt-5">
+    <h4 class="text-center mb-3">All Approved Orders</h4>
+    {% if approved_orders %}
+        {% for order in approved_orders %}
+            <div class="mb-4 border rounded p-3">
+                <div class="fw-bold">Order ID: {{ order.id }} | Placed: {{ order.order_time|date:'Y-m-d H:i' }}</div>
+                <div class="mb-2">Name: {{ order.name }} | Address: {{ order.address }} | Zipcode: {{ order.zipcode }} | Phone: {{ order.phone }}</div>
+                <table class="table table-bordered mt-2">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sl. No.</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.item_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>£{{ item.price|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mt-3 text-end">
+                    <form method="post" action="/chef_order_delivered/{{ order.id }}/" target="_blank">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Delivered & Print</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center">No approved orders.</div>
+    {% endif %}
+</div>

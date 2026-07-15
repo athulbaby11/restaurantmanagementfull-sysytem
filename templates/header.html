@@ -1,0 +1,136 @@
+{% load static %}
+{% load currency_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala Street</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kerala Street | Order Online</title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        <header class="site-header">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="{% url 'index' %}">Kerala Street</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="mainNav">
+                        <ul class="navbar-nav ms-auto align-items-lg-center">
+                            {% if request.session.name == 'admin' %}
+                                <li class="nav-item me-lg-2 mb-2 mb-lg-0">
+                                    <form method="get" action="{% url 'set_currency' %}" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <select name="currency" class="form-select form-select-sm" onchange="this.form.submit()" style="min-width:180px;">
+                                            <option value="GBP" {% if request.session.currency|default:'GBP' == 'GBP' %}selected{% endif %}>British Pound (£)</option>
+                                            <option value="USD" {% if request.session.currency == 'USD' %}selected{% endif %}>US Dollar ($)</option>
+                                            <option value="EUR" {% if request.session.currency == 'EUR' %}selected{% endif %}>Euro (€)</option>
+                                            <option value="INR" {% if request.session.currency == 'INR' %}selected{% endif %}>Indian Rupee (₹)</option>
+                                            <option value="JPY" {% if request.session.currency == 'JPY' %}selected{% endif %}>Japanese Yen (¥)</option>
+                                            <option value="CNY" {% if request.session.currency == 'CNY' %}selected{% endif %}>Chinese Yuan (¥)</option>
+                                            <option value="AUD" {% if request.session.currency == 'AUD' %}selected{% endif %}>Australian Dollar (A$)</option>
+                                            <option value="CAD" {% if request.session.currency == 'CAD' %}selected{% endif %}>Canadian Dollar (C$)</option>
+                                            <option value="CHF" {% if request.session.currency == 'CHF' %}selected{% endif %}>Swiss Franc (CHF)</option>
+                                            <option value="SGD" {% if request.session.currency == 'SGD' %}selected{% endif %}>Singapore Dollar (S$)</option>
+                                            <option value="NZD" {% if request.session.currency == 'NZD' %}selected{% endif %}>New Zealand Dollar (NZ$)</option>
+                                            <option value="HKD" {% if request.session.currency == 'HKD' %}selected{% endif %}>Hong Kong Dollar (HK$)</option>
+                                            <option value="SEK" {% if request.session.currency == 'SEK' %}selected{% endif %}>Swedish Krona (kr)</option>
+                                            <option value="NOK" {% if request.session.currency == 'NOK' %}selected{% endif %}>Norwegian Krone (kr)</option>
+                                            <option value="DKK" {% if request.session.currency == 'DKK' %}selected{% endif %}>Danish Krone (kr)</option>
+                                            <option value="PLN" {% if request.session.currency == 'PLN' %}selected{% endif %}>Polish Złoty (zł)</option>
+                                            <option value="AED" {% if request.session.currency == 'AED' %}selected{% endif %}>UAE Dirham (د.إ)</option>
+                                            <option value="SAR" {% if request.session.currency == 'SAR' %}selected{% endif %}>Saudi Riyal (ر.س)</option>
+                                        </select>
+                                    </form>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                                <li class="nav-item"><a class="nav-link text-success" href="{% url 'chef_register' %}">Chef Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'user_view' %}">Our Team</a></li>
+                                <li class="nav-item"><a class="nav-link text-info" href="{% url 'our_chef' %}">Our Chef</a></li>
+                                
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Menu
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                        <li><a class="dropdown-item" href="{% url 'maincat_view' %}">Main Categories</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'cat_view' %}">Categories</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'subcat_view' %}">Sub Categories</a></li>
+                                    </ul>
+                                </li>
+
+                                <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
+                            {% elif request.session.user == 'team' or request.session.tid %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'team_dashboard' %}">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'profile_view' %}">Profile View</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'team_order_menu' %}">Order Menu</a></li>
+                                <li class="nav-item d-flex align-items-center ms-2">
+                                    <a href="{% url 'team_cart' %}" class="btn btn-warning rounded-pill px-3 py-1 d-flex align-items-center position-relative" style="font-weight:600; font-size:1rem;">
+                                        <i class="bi bi-cart3 me-2" style="font-size:1.3rem;"></i> Cart
+                                        {% if request.session.team_cart %}
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.9rem;">
+                                                {{ request.session.team_cart }}
+                                            </span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
+                            {% elif request.session.user == 'chef' %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'chef_dashboard' %}">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'chef_profile' %}">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
+                            {% elif request.session.user == 'user' %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'team_dashboard' %}">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'profile_view' %}">Profile View</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'menu_page' %}">Order Menu</a></li>
+                                 <li class="nav-item d-flex align-items-center ms-2">
+                                 <li class="nav-item d-flex align-items-center ms-2">
+                                    <a href="{% url 'user_cart' %}" class="btn btn-warning rounded-pill px-3 py-1 d-flex align-items-center position-relative" style="font-weight:600; font-size:1rem;">
+                                        <i class="bi bi-cart3 me-2" style="font-size:1.3rem;"></i> Cart
+                                        {% if request.session.user_cart_count and request.session.user_cart_count > 0 %}
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.9rem;">
+                                                {{ request.session.user_cart_count }}
+                                            </span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#home">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'menu_page' %}">Menu</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'book_table' %}">Reservation</a></li>
+                               {% comment %} <li class="nav-item d-flex align-items-center ms-2">
+                                   <a href="{% url 'user_cart' %}" class="btn btn-warning rounded-pill px-3 py-1 d-flex align-items-center" style="font-weight:600; font-size:1rem;">
+                                    <i class="bi bi-cart3 me-2" style="font-size:1.3rem;"></i> Cart
+                                   </a> 
+                                </li>  {% endcomment %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+

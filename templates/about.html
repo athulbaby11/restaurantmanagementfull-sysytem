@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala Street | About</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'index' %}">Kerala Street</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#menu">Menu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#specials">Specials</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#gallery">Gallery</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'book_table' %}">Reservation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- <section id="home" class="hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <p class="eyebrow">Kerala Street</p>
+                        <h1>South Indian Restaurant</h1>
+                        <p class="hero-subtitle">Flavours from the Coast</p>
+                        <p class="lead">Kerala Street blends coastal spices, homestyle recipes, and a modern dining
+                            vibe. Enjoy slow-cooked curries, fresh seafood, and vegetarian favourites in a warm,
+                            family-friendly atmosphere.</p>
+                        <div class="hero-actions">
+                            <a class="btn btn-hero" href="{% url 'index' %}#reservation">Book a Table</a>
+                            <a class="btn btn-outline-hero" href="{% url 'index' %}#order">Order Online</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="hero-card">
+                            <div class="hero-image"></div>
+                            <div class="hero-card-body">
+                                <span>Signature Style</span>
+                                <h3>Coastal Traditions</h3>
+                                <p>House spice blends and classic Kerala plates.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+
+        <section id="about" class="section about">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="about-card">
+                            <h2>What Makes Us Special</h2>
+                            <p>We celebrate Kerala’s coastal heritage with dishes that are rich, aromatic, and
+                                comforting. From flaky parottas to slow-simmered stews, every plate is crafted with
+                                care and consistency.</p>
+                            <ul class="about-list">
+                                <li><i class="bi bi-check2-circle"></i> Signature spice mixes prepared daily</li>
+                                <li><i class="bi bi-check2-circle"></i> Fresh seafood, veg, and halal options</li>
+                                <li><i class="bi bi-check2-circle"></i> Friendly service and relaxed seating</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="about-grid">
+                            <div class="about-tile">Dine‑in & Takeaway</div>
+                            <div class="about-tile">Family Seating & Events</div>
+                            <div class="about-tile">Freshly Ground Spices</div>
+                            <div class="about-tile">4.8 ★ Customer Rating</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section specials">
+            <div class="container">
+                <div class="section-title">
+                    <p class="eyebrow">Kitchen Values</p>
+                    <h2>Our Promise</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="specials-card">
+                            <h3>Fresh Ingredients</h3>
+                            <p>Daily market produce and coastal catch for the best flavour.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="specials-card">
+                            <h3>Authentic Taste</h3>
+                            <p>Traditional recipes preserved and served with modern care.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="specials-card">
+                            <h3>Warm Hospitality</h3>
+                            <p>A welcoming space for families, friends, and celebrations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section testimonials">
+            <div class="container">
+                <div class="section-title">
+                    <p class="eyebrow">Our Values</p>
+                    <h2>Why Guests Love Us</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="testimonial-card">
+                            <p>“Traditional Kerala taste with a modern touch. The staff made us feel at home.”</p>
+                            <h5>Sarah J.</h5>
+                            <span>Local Guide</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="testimonial-card">
+                            <p>“Perfect for family dinners. The seafood platter is outstanding.”</p>
+                            <h5>Arun K.</h5>
+                            <span>Foodie</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="testimonial-card">
+                            <p>“Authentic and affordable. Great ambience and friendly service.”</p>
+                            <h5>Maria P.</h5>
+                            <span>Customer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section specials">
+            <div class="container">
+                <div class="section-title">
+                    <p class="eyebrow">Milestones</p>
+                    <h2>Our Journey</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="specials-card">
+                            <h3>2009</h3>
+                            <p>Kerala Street opens its doors with classic homestyle recipes.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="specials-card">
+                            <h3>2015</h3>
+                            <p>Introduced live kitchen and signature seafood platters.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="specials-card">
+                            <h3>2021</h3>
+                            <p>Expanded delivery and takeaway for the local community.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="specials-card">
+                            <h3>2026</h3>
+                            <p>Opening soon with a refreshed Kerala-inspired dining space.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section gallery">
+            <div class="container">
+                <div class="section-title">
+                    <p class="eyebrow">Find Us</p>
+                    <h2>High Street, Hounslow</h2>
+                </div>
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-5">
+                        <div class="about-card">
+                            <h3>Kerala Street</h3>
+                            <p>High Street, Hounslow</p>
+                            <p>Open daily: 11:00 AM - 11:30 PM</p>
+                            <p><i class="bi bi-telephone"></i> +91 98765 43210</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="map-embed">
+                            <iframe
+                                title="Kerala Street Location"
+                                src="https://www.google.com/maps?q=High%20Street%2C%20Hounslow&output=embed"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reservation">
+            <div class="container">
+                <div class="reservation-card">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-8">
+                            <h2>Visit Kerala Street</h2>
+                            <p>We are open daily. Walk in for lunch, plan a family dinner, or book your celebration.</p>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="reservation-info">
+                                <div><i class="bi bi-geo-alt"></i> High Street, Hounslow</div>
+                                <div><i class="bi bi-clock"></i> 11:00 AM - 11:30 PM</div>
+                                <div><i class="bi bi-telephone"></i> +91 98765 43210</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h3>Kerala Street</h3>
+                    <p>South Indian Restaurant serving Kerala's coastal heritage and bold flavours.</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Opening Hours</h4>
+                    <ul>
+                        <li>Mon - Fri: 11:00 AM - 10:30 PM</li>
+                        <li>Sat - Sun: 11:00 AM - 11:30 PM</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                        <li><i class="bi bi-envelope"></i> hello@saffronbistro.com</li>
+                        <li><i class="bi bi-geo-alt"></i> High Street, Hounslow</li>
+                        <li><i class="bi bi-bag-check"></i> <a href="{% url 'menu_page' %}">Order Online</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 Saffron Bistro. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>

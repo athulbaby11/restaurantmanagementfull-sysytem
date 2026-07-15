@@ -1,0 +1,25 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<div class="card shadow-lg">
+				<div class="card-body d-flex flex-column align-items-center justify-content-center">
+					{% if image %}
+						<img src="{{ image.url }}" alt="Chef Image" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;">
+					{% else %}
+						<img src="{% static 'image/default_food.png' %}" alt="No Image" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;">
+					{% endif %}
+					<h3 class="mb-2">{{ name }} <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> Verified</span></h3>
+					<p class="mb-1"><strong>Email:</strong> {{ email }}</p>
+					<p class="mb-1"><strong>Phone:</strong> {{ phone }}</p>
+					{% if specialty %}
+					<p class="mb-1"><strong>Specialty:</strong> {{ specialty }}</p>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.html' %}

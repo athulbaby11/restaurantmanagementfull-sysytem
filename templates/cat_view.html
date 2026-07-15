@@ -1,0 +1,53 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<a href="javascript:history.back()" class="btn btn-link mb-3" style="font-size: 1.2rem; text-decoration: none;">
+	&#8592; Back
+</a>
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-10">
+			<div class="card shadow">
+				<div class="card-body">
+					<h3 class="mb-4 text-center">Categories</h3>
+					<table class="table table-bordered table-striped text-center">
+						<thead class="table-dark">
+							<tr>
+								<th>Image</th>
+								<th>Name</th>
+								<th>Main Category</th>
+								<th>Price</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for cat in categories %}
+							<tr>
+								<td>
+									{% if cat.image %}
+										<img src="{{ cat.image.url }}" alt="Image" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+									{% else %}
+										<span class="text-muted">No Image</span>
+									{% endif %}
+								</td>
+								<td>{{ cat.name }}</td>
+								<td>{{ cat.main_category.name }}</td>
+								<td>{% if cat.price %}₹{{ cat.price }}{% else %}-{% endif %}</td>
+								<td>
+									<form method="post" action="{% url 'cat_delete' cat.id %}" style="display:inline;">
+										{% csrf_token %}
+										<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+									</form>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.html' %}

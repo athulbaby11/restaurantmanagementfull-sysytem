@@ -1,0 +1,46 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#e74c3c;">Today's Unavailable Items</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Main Category</th>
+                    <th>Category</th>
+                    <th>Subcategory Name</th>
+                    <th>Price</th>
+                    <th>Offer Price</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subcat in unavailable_items %}
+                <tr>
+                    <td>{{ subcat.id }}</td>
+                    <td>
+                        {% if subcat.image %}
+                            <img src="{{ subcat.image.url }}" alt="Image" width="60" height="60" style="object-fit:cover; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        {% else %}
+                            <span class="text-muted">No Image</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ subcat.category.main_category.name }}</td>
+                    <td>{{ subcat.category.name }}</td>
+                    <td style="font-weight:500;">{{ subcat.name }}</td>
+                    <td>{% if subcat.price %}£{{ subcat.price }}{% else %}-{% endif %}</td>
+                    <td>{% if subcat.offer_price %}£{{ subcat.offer_price }}{% else %}-{% endif %}</td>
+                    <td style="max-width:200px; word-break:break-word;">{{ subcat.description }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center">No unavailable items today.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}

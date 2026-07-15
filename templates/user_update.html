@@ -1,0 +1,139 @@
+{% load static %}
+{% include 'header.html' %}
+
+{% if success %}
+<div id="successMsg" class="alert alert-success text-center py-2 mb-3" style="max-width: 400px; margin: 0 auto; border-radius: 8px; font-size: 1rem;">Update successful!</div>
+<script>
+	setTimeout(function() {
+		var msg = document.getElementById('successMsg');
+		if (msg) msg.style.display = 'none';
+	}, 2500);
+</script>
+{% endif %}
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<h2 class="mb-4 text-center">Update User</h2>
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="mb-3">
+					<label for="fullname" class="form-label">Full Name</label>
+					<input type="text" class="form-control form-control-sm" id="fullname" name="fullname" value="{{ user.name }}" required style="padding: 6px; height: 36px;">
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">Email</label>
+					<input type="email" class="form-control form-control-sm" id="email" name="email" value="{{ user.email }}" required style="padding: 6px; height: 36px;">
+				</div>
+				<div class="mb-3">
+					<label for="phone" class="form-label">Phone Number</label>
+					<input type="tel" class="form-control form-control-sm" id="phone" name="phone" value="{{ user.phone }}" required style="padding: 6px; height: 36px;">
+				</div>
+				<div class="mb-3">
+					<label for="photo" class="form-label">Photo</label>
+					{% if user.image %}
+						<img src="{{ user.image.url }}" alt="User Photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-bottom: 8px;">
+					{% endif %}
+					<input type="file" class="form-control form-control-sm" id="photo" name="photo" accept="image/*" style="padding: 6px; height: 36px;">
+					<div id="photoError" class="text-danger mt-1" style="display:none;">Image size must be less than 4MB.</div>
+				</div>
+				<div class="mb-3 position-relative">
+					<label for="password" class="form-label">Password</label>
+					<div class="input-group">
+						<input type="password" class="form-control form-control-sm" id="password" name="password" required style="padding: 6px; height: 36px;">
+						<span class="input-group-text" id="togglePassword" style="cursor:pointer">
+							<i class="bi bi-eye-slash" id="passwordIcon"></i>
+						</span>
+					</div>
+				</div>
+				<div class="mb-3 position-relative">
+					<label for="confirm_password" class="form-label">Confirm Password</label>
+					<div class="input-group">
+						<input type="password" class="form-control form-control-sm" id="confirm_password" name="confirm_password" required style="padding: 6px; height: 36px;">
+						<span class="input-group-text" id="toggleConfirmPassword" style="cursor:pointer">
+							<i class="bi bi-eye-slash" id="confirmPasswordIcon"></i>
+						</span>
+					</div>
+					<div id="passwordError" class="text-danger mt-1" style="display:none;">Passwords do not match.</div>
+				</div>
+				<button type="submit" class="btn btn-primary w-100 mb-4">Update</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></script>
+<script>
+// Password match validation
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('confirm_password');
+const passwordError = document.getElementById('passwordError');
+const form = document.querySelector('form');
+
+function checkPasswordMatch() {
+	if (password.value !== confirmPassword.value) {
+		passwordError.style.display = 'block';
+		return false;
+	} else {
+		passwordError.style.display = 'none';
+		return true;
+	}
+}
+
+confirmPassword.addEventListener('input', checkPasswordMatch);
+password.addEventListener('input', checkPasswordMatch);
+
+form.addEventListener('submit', function(e) {
+	// Password match check
+	if (!checkPasswordMatch()) {
+		e.preventDefault();
+		return;
+	}
+	// Image size check
+	const photo = document.getElementById('photo');
+	const photoError = document.getElementById('photoError');
+	if (photo.files.length > 0) {
+		if (photo.files[0].size > 4 * 1024 * 1024) {
+			photoError.style.display = 'block';
+			e.preventDefault();
+			return;
+		} else {
+			photoError.style.display = 'none';
+		}
+	}
+});
+
+document.getElementById('photo').addEventListener('change', function() {
+	const photoError = document.getElementById('photoError');
+	if (this.files.length > 0 && this.files[0].size > 4 * 1024 * 1024) {
+		photoError.style.display = 'block';
+		alert('Image size must be less than 4MB');
+		this.value = '';
+	} else {
+		photoError.style.display = 'none';
+	}
+});
+
+document.getElementById('togglePassword').addEventListener('click', function() {
+	togglePasswordVisibility('password', 'passwordIcon');
+});
+document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+	togglePasswordVisibility('confirm_password', 'confirmPasswordIcon');
+});
+
+function togglePasswordVisibility(inputId, iconId) {
+	const input = document.getElementById(inputId);
+	const icon = document.getElementById(iconId);
+	if (input.type === 'password') {
+		input.type = 'text';
+		icon.classList.remove('bi-eye-slash');
+		icon.classList.add('bi-eye');
+	} else {
+		input.type = 'password';
+		icon.classList.remove('bi-eye');
+		icon.classList.add('bi-eye-slash');
+	}
+}
+</script>
+
+{% include 'footer.html' %}

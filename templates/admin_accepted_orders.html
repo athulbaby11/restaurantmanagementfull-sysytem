@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'header.html' %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Accepted Online Orders</h2>
+    <div class="mb-3 text-end">
+        <span class="badge bg-success">{{ accepted_order_count }} Accepted</span>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Zipcode</th>
+                <th>Phone</th>
+                <th>Payment Method</th>
+                <th>Order Time</th>
+                <th>Price</th>
+                <th>VAT</th>
+                <th>Delivery Charge</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in accepted_orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.name }}</td>
+                <td>{{ order.address }}</td>
+                <td>{{ order.zipcode }}</td>
+                <td>{{ order.phone }}</td>
+                <td>{{ order.payment_method }}</td>
+                <td>{{ order.order_time|date:'Y-m-d H:i' }}</td>
+                <td>£{{ order.price }}</td>
+                <td>£{{ order.vat }}</td>
+                <td>£{{ order.delivery_charge }}</td>
+                <td class="fw-bold text-success">£{{ order.total_price }}</td>
+                {% if order.status == 'Accepted' %}
+                <td><span class="badge bg-success">Accepted</span></td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="11" class="text-center">No accepted orders found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include 'footer.html' %}
+{% endblock %}

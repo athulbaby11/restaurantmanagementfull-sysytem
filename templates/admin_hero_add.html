@@ -1,0 +1,19 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h2 class="mb-4">Add Hero Image</h2>
+    {% if success %}
+        <div class="alert alert-success">Hero image added successfully.</div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm" style="max-width:500px;margin:auto;">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image" required>
+        </div>
+        <!-- Only image upload, no title or subtitle fields -->
+        <button type="submit" class="btn btn-primary">Add Hero Image</button>
+        <a href="{% url 'admin_hero_list' %}" class="btn btn-secondary ms-2">Back to Hero Images</a>
+    </form>
+</div>
+{% include 'footer.html' %}

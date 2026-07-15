@@ -1,0 +1,130 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#27ae60;">Sales Revenue</h2>
+    <div class="mb-4" style="max-width:600px;margin:auto;">
+        <form method="get" class="d-flex gap-2 align-items-center justify-content-center flex-wrap">
+            <label for="filter" class="fw-bold">Show:</label>
+            <select name="filter" id="filter" class="form-select" style="max-width:180px;">
+                <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All</option>
+                <option value="daily" {% if filter_type == 'daily' %}selected{% endif %}>Daily</option>
+                <option value="weekly" {% if filter_type == 'weekly' %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if filter_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                <option value="3months" {% if filter_type == '3months' %}selected{% endif %}>Last 3 Months</option>
+                <option value="6months" {% if filter_type == '6months' %}selected{% endif %}>Last 6 Months</option>
+            </select>
+            <span class="fw-bold ms-3">Or</span>
+            <label for="start_date" class="fw-bold ms-2">From:</label>
+            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}">
+            <label for="end_date" class="fw-bold ms-2">To:</label>
+            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}">
+            <button type="submit" class="btn btn-primary">Apply</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print()">Print</button>
+        </form>
+    </div>
+    <div class="print-header">
+        {% if filter_type == 'custom' and start_date and end_date %}
+            Showing sales revenue from {{ start_date|date:'d-m-Y' }} to {{ end_date|date:'d-m-Y' }}
+        {% elif filter_type == 'daily' %}
+            Showing sales revenue for {{ orders.0.delivered_at|date:'d-m-Y' }}
+        {% elif filter_type == 'weekly' %}
+            Showing sales revenue for last 7 days (up to {{ orders.0.delivered_at|date:'d-m-Y' }})
+        {% elif filter_type == 'monthly' %}
+            Showing sales revenue for {{ orders.0.delivered_at|date:'F Y' }}
+        {% elif filter_type == '3months' %}
+            Showing sales revenue for last 3 months
+        {% elif filter_type == '6months' %}
+            Showing sales revenue for last 6 months
+        {% else %}
+            Showing all sales revenue
+        {% endif %}
+    </div>
+    <table class="table table-bordered table-hover sales-revenue-table">
+        <thead class="table-light">
+            <tr>
+                <th>Sl. No</th>
+                <th>Order No</th>
+                <th>Delivered Time</th>
+                <th>Amount</th>
+                <th>GST (20%)</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td class="serial-boost">{{ forloop.counter }}</td>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.delivered_at|date:'Y-m-d H:i' }}</td>
+                <td>£{{ order.amount|floatformat:2 }}</td>
+                <td>£{{ order.gst|floatformat:2 }}</td>
+                <td>£{{ order.total|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    <div style="color:#aaa; font-size:1.3rem;">
+                        No sales revenue found.
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background:#e0f7fa; font-weight:700;">
+                <td colspan="3" class="text-end">Total</td>
+                <td>£{{ total_amount|floatformat:2 }}</td>
+                <td>£{{ total_gst|floatformat:2 }}</td>
+                <td>£{{ total_total|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="position-absolute" style="top: 20px; right: 20px; display: flex; gap: 8px;">
+        <a href="javascript:history.back()" class="btn btn-warning btn-sm">Back</a>
+    </div>
+</div>
+<style>
+.sales-revenue-table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(39,174,96,0.08);
+    background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+}
+.sales-revenue-table th {
+    background: linear-gradient(90deg, #27ae60 60%, #00bcd4 100%);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+    border: none;
+}
+.sales-revenue-table td {
+    background: #fff;
+    font-size: 1rem;
+    border: none;
+    vertical-align: middle;
+}
+.sales-revenue-table tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+.sales-revenue-table tr:last-child {
+    border-bottom: none;
+}
+.sales-revenue-table .serial-boost {
+    background: linear-gradient(90deg, #00bcd4 60%, #27ae60 100%);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 2px 10px;
+    box-shadow: 0 2px 8px rgba(39,174,96,0.08);
+}
+</style>
+<style>
+@media print {
+    form, .mb-4, .btn, .position-absolute, .alert { display: none !important; }
+    .print-header { display: block !important; }
+}
+.print-header { display: none; font-size:1.2rem; font-weight:700; margin-bottom:16px; text-align:center; }
+</style>
+{% include 'footer.html' %}

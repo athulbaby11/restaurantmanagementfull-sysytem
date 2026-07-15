@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Print</title>
+    <style>
+        body { font-size: 11px; margin: 0; padding: 0; width: 58mm; }
+        .order-header { font-weight: bold; margin-bottom: 6px; font-size: 12px; }
+        .order-details { margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+        th, td { border: 1px dashed #888; padding: 2px 4px; text-align: left; font-size: 11px; }
+        th { background: #f2f2f2; }
+        .total { font-weight: bold; margin-top: 6px; font-size: 12px; }
+        .footer { font-size: 10px; margin-top: 8px; text-align: center; }
+        @media print {
+            body { width: 58mm; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="order-header">Order ID: {{ order.id }}</div>
+    <div class="order-details">
+        Name: {{ order.name }}<br>
+        Address: {{ order.address }}<br>
+        Zipcode: {{ order.zipcode }}<br>
+        Phone: {{ order.phone }}<br>
+        Placed: {{ order.order_time|date:'Y-m-d H:i' }}
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Sl.</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>£{{ item.price|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="total">Total: £{{ order.total_price|floatformat:2 }}</div>
+    <div class="footer">Thank you! | {{ order.order_time|date:'Y-m-d H:i' }}</div>
+    <script>window.print();</script>
+</body>
+</html>

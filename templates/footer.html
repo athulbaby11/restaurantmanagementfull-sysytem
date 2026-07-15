@@ -1,0 +1,60 @@
+ {% load static %}
+ 
+ <footer class="site-footer">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h3>Kerala Street</h3>
+                        <p>South Indian Restaurant serving Kerala's coastal heritage and bold flavours.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Opening Hours</h4>
+                        <ul>
+                            <li>Mon - Fri: 11:00 AM - 10:30 PM</li>
+                            <li>Sat - Sun: 11:00 AM - 11:30 PM</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                            <li><i class="bi bi-envelope"></i> hello@saffronbistro.com</li>
+                            <li><i class="bi bi-geo-alt"></i> High Street, Hounslow</li>
+                            <li><i class="bi bi-bag-check"></i> <a href="{% url 'menu_page' %}">Order Online</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">© 2026 Kerala Street. All rights reserved.</div>
+            </div>
+        </footer>
+
+        <!-- Popper.js -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <!-- Bootstrap JS -->
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+                <script>
+                // Show modal on checkout
+                document.addEventListener('DOMContentLoaded', function() {
+                    var checkoutForm = document.getElementById('checkoutForm');
+                    var checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+                    if (checkoutForm) {
+                        checkoutForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            // Copy cart values to modal
+                            document.getElementById('modalSubtotal').textContent = document.getElementById('cartSubtotal').textContent;
+                            document.getElementById('modalDelivery').textContent = document.getElementById('cartDelivery').textContent;
+                            document.getElementById('modalTotal').textContent = document.getElementById('cartTotal').textContent;
+                            // Copy form values
+                            document.getElementById('modalName').value = document.getElementById('orderName').value;
+                            document.getElementById('modalPhone').value = document.getElementById('orderPhone').value;
+                            document.getElementById('modalAddress').value = document.getElementById('orderAddress').value;
+                            document.getElementById('modalPayment').value = document.getElementById('orderPayment').value;
+                            document.getElementById('modalNote').value = document.getElementById('orderNote').value;
+                            checkoutModal.show();
+                        });
+                    }
+                });
+                </script>
+    </body>
+    </html>

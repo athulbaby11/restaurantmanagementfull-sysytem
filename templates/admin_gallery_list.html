@@ -1,0 +1,31 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h2 class="mb-4">Gallery Images</h2>
+    <a href="{% url 'admin_gallery_add' %}" class="btn btn-primary mb-3">Add New Image</a>
+    {% if request.GET.deleted %}
+        <div class="alert alert-success">Image deleted successfully.</div>
+    {% endif %}
+    {% if request.GET.notfound %}
+        <div class="alert alert-warning">Image not found or already deleted.</div>
+    {% endif %}
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ image.image.url }}" class="card-img-top" alt="Gallery Image" style="height:220px;object-fit:cover;">
+                <div class="card-body">
+                    <p class="card-text">{{ image.description }}</p>
+                    <a href="{% url 'admin_gallery_edit' image.id %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'admin_gallery_delete' image.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?');">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No gallery images found.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.html' %}

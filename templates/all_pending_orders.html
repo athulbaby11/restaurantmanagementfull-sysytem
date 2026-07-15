@@ -1,0 +1,42 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="mt-5">
+    <h4 class="text-center mb-3">All Pending Orders</h4>
+    {% if pending_orders %}
+        {% for order in pending_orders %}
+            <div class="mb-4 border rounded p-3">
+                <div class="fw-bold">Order ID: {{ order.id }} | Table: {{ order.table_number }} | Placed: {{ order.created_at|date:'Y-m-d H:i' }} | Status: {{ order.status }}</div>
+                <table class="table table-bordered mt-2">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sl. No.</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.qty }}</td>
+                            <td>£{{ item.price|floatformat:2 }}</td>
+                            <td>£{{ item.total|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <form method="post" action="{% url 'accept_order' %}?order_id={{ order.id }}&table_number={{ order.table_number }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Approve</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center">No pending orders.</div>
+    {% endif %}
+</div>

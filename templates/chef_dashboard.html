@@ -1,0 +1,158 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row">
+		<!-- Sidebar Left -->
+		<div class="col-md-3">
+			<div class="d-flex flex-column gap-4">
+				   <a href="{% url 'cheforder_request' %}" class="btn btn-outline-primary w-100 mb-3">Order Request</a>
+				   <a href="{% url 'cheforder_accept' 0 %}" class="btn btn-success btn-lg w-100">Approved Request</a>
+				   <a href="{% url 'chef_completed_orders' %}" class="btn btn-info btn-lg w-100">Completed Orders</a>
+				   <a href="{% url 'chef_online_orders' %}" class="btn btn-warning w-100 position-relative" id="chef-online-orders-link">
+					   Online Orders
+					   {% if online_order_count > 0 %}
+						   <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger" id="chef-online-orders-badge">{{ online_order_count }}</span>
+					   {% endif %}
+				   </a>
+			</div>
+		</div>
+		<!-- Main Content -->
+		<div class="col-md-9">
+			<div class="card shadow-lg dashboard-card">
+				<div class="card-header dashboard-header text-center">
+					<h3 class="mb-0">Chef Dashboard</h3>
+				</div>
+				<div class="card-body">
+					<p class="lead text-center">Welcome to your dashboard. Use the buttons on the left to manage order requests and approved requests.</p>
+					<div class="row mt-4">
+						<div class="col-md-4 dashboard-section dashboard-pending">
+							<h5>Last 10 Pending Orders</h5>
+							<ul class="list-group">
+								{% for order in last_10_pending %}
+									<a href="{% url 'cheforder_request' %}?order_id={{ order.id }}" style="text-decoration:none; color:inherit;">
+										<li class="list-group-item">
+											<strong>Order #{{ order.id }}</strong> | <span class="table-number-boost">Table: {{ order.table_number }}</span> | {{ order.created_at }}
+										</li>
+									</a>
+								{% empty %}
+									<li class="list-group-item">No pending orders.</li>
+								{% endfor %}
+							</ul>
+							<!-- Pending Orders Summary -->
+							<div class="mt-3">
+								<strong>Total Pending Orders:</strong> {{ pending_orders_count }}<br>
+								<strong>Pending Table Numbers:</strong> {{ pending_table_numbers|join:', ' }}
+							</div>
+						</div>
+						<div class="col-md-4 dashboard-section dashboard-preparing">
+							<h5>Last 10 Preparing Orders</h5>
+							<ul class="list-group">
+								{% for order in last_10_preparing %}
+									<a href="{% url 'cheforder_accept' order.id %}" style="text-decoration:none; color:inherit;">
+										<li class="list-group-item">
+											<strong>Order #{{ order.id }}</strong> | <span class="table-number-boost">Table: {{ order.table_number }}</span> | {{ order.created_at }}
+										</li>
+									</a>
+								{% empty %}
+									<li class="list-group-item">No preparing orders.</li>
+								{% endfor %}
+							</ul>
+						</div>
+						<div class="col-md-4 dashboard-section dashboard-delivered">
+							<h5>Last 10 Delivered Orders</h5>
+							<ul class="list-group">
+								{% for order in completed_orders|slice:":10" %}
+									<li class="list-group-item">
+										<strong>Order #{{ order.order_id }}</strong> | <span class="table-number-boost">Table: {{ order.table_number }}</span> | Delivered: {{ order.delivered_at|date:'Y-m-d H:i' }}
+									</li>
+								{% empty %}
+									<li class="list-group-item">No delivered orders.</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+					<!-- Online Order Requests Summary -->
+					<div class="row mt-4">
+						<div class="col-md-12 dashboard-section dashboard-online-request">
+							<h5>Online Order Requests</h5>
+							<strong>Total Online Order Requests:</strong> {{ online_order_request_count }}<br>
+							<strong>Online Order Request Table Numbers:</strong> {{ online_order_request_table_numbers|join:', ' }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	.dashboard-card {
+		border-radius: 18px;
+		box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+		background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+	}
+	.dashboard-header {
+		background: linear-gradient(90deg, #00bcd4 60%, #ffeb3b 100%);
+		color: #333;
+		border-radius: 18px 18px 0 0;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+	}
+	.dashboard-section h5 {
+		font-weight: 700;
+		color: #00796b;
+		margin-bottom: 12px;
+	}
+	.list-group-item {
+		border-radius: 8px;
+		margin-bottom: 6px;
+		background: #fafafa;
+		box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+	}
+	.dashboard-section {
+		padding: 12px;
+		background: #f5f5f5;
+		border-radius: 12px;
+		margin-bottom: 18px;
+	}
+	.dashboard-pending {
+		background: linear-gradient(135deg, #e3fcec 0%, #d0f2ff 100%);
+	}
+	.dashboard-preparing {
+		background: linear-gradient(135deg, #fff3e0 0%, #ffe0e0 100%);
+	}
+	.dashboard-delivered {
+		background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+	}
+	.table-number-boost {
+		color: #fff;
+		background: linear-gradient(90deg, #00bcd4 60%, #ffeb3b 100%);
+		padding: 2px 10px;
+		border-radius: 8px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	}
+</style>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('.dashboard-section').forEach(function(el, i) {
+			el.style.opacity = 0;
+			setTimeout(function() {
+				el.style.transition = 'opacity 0.6s';
+				el.style.opacity = 1;
+			}, 200 + i * 150);
+		});
+	});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var link = document.getElementById('chef-online-orders-link');
+    var badge = document.getElementById('chef-online-orders-badge');
+    if (link && badge) {
+        link.addEventListener('click', function() {
+            badge.style.display = 'none';
+        });
+    }
+});
+</script>
+{% include 'footer.html' %}

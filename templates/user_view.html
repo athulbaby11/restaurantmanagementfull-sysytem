@@ -1,0 +1,55 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<h2 class="mb-4 text-center">our Teams</h2>
+	<table class="table table-bordered table-striped">
+		<thead class="table-dark">
+			<tr>
+				<th>Sl.No</th>
+				<th>Photo</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Phone</th>
+				<th>Update</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+			<tr>
+				<td>{{ forloop.counter }}</td>
+				<td>
+					{% if user.image and user.image.url %}
+						<span style="position:relative;display:inline-block;width:50px;height:50px;">
+							<img src="{{ user.image.url }}" alt="User Photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+							<div style="width: 50px; height: 50px; background: #eee; color: #555; display: none; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem; position:absolute; top:0; left:0;">
+								{{ user.name|slice:":2"|upper }}
+							</div>
+						</span>
+					{% else %}
+						<div style="width: 50px; height: 50px; background: #eee; color: #555; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem;">
+							{{ user.name|slice:":2"|upper }}
+						</div>
+					{% endif %}
+				</td>
+				<td>{{ user.name }}</td>
+				<td>{{ user.email }}</td>
+				<td>{{ user.phone }}</td>
+				<td>
+					<a href="{% url 'user_update' user.id %}" class="btn btn-sm btn-warning">Update</a>
+				</td>
+				<td>
+					<form method="post" action="{% url 'user_delete' user.id %}" style="display:inline;">
+						{% csrf_token %}
+						<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+					</form>
+				</td>
+			</tr>
+			{% endfor %}
+			{% if users|length == 0 %}
+			<tr><td colspan="7" class="text-center">No users found.</td></tr>
+			{% endif %}
+		</tbody>
+		</table>
+</div>

@@ -1,0 +1,294 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container-fluid mt-4">
+	<div class="row">
+		<!-- Sidebar -->
+		<div class="col-md-3">
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-primary text-white">
+					<h5 class="mb-0">Food Items</h5>
+				</div>
+				<div class="list-group list-group-flush">
+					<a href="{% url 'main_category' %}" class="list-group-item list-group-item-action">Main Categories</a>
+					<a href="{% url 'category_view' %}" class="list-group-item list-group-item-action">Categories</a>
+					<a href="{% url 'subcategory_view' %}" class="list-group-item list-group-item-action">Sub Categories</a>
+				</div>
+			</div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Homepage Content</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'admin_gallery_list' %}" class="list-group-item list-group-item-action">Manage Gallery</a>
+                    <a href="{% url 'admin_hero_list' %}" class="list-group-item list-group-item-action">Manage Hero Images</a>
+                    <a href="{% url 'admin_news_list' %}" class="list-group-item list-group-item-action">Manage News</a>
+                </div>
+            </div>
+			<div class="card shadow-sm mb-4">
+				   <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+					   <h5 class="mb-0">Reserve Table</h5>
+					   {% if new_reservation_count > 0 %}
+						   <span class="badge bg-danger ms-2">{{ new_reservation_count }}</span>
+					   {% endif %}
+				   </div>
+				   <div class="card-body">
+						  <a href="{% url 'reservation_list' %}" class="btn btn-outline-success w-100">Reserve Table</a>
+				</div>
+			</div>
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-warning text-dark">
+					<h5 class="mb-0">Food Items</h5>
+				</div>
+				   <div class="card-body">
+					   <a href="{% url 'subcat_view' %}" class="btn btn-outline-warning w-100">View Food Items</a>
+				</div>
+			</div>
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-info text-dark d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">Online Order Request</h5>
+					{% if online_order_count > 0 %}
+						<span class="badge bg-danger ms-2">{{ online_order_count }}</span>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<a href="{% url 'admin_online_orders' %}" class="btn btn-outline-info w-100">Go to Online Orders Table</a>
+					<a href="{% url 'all_approved_orders' %}" class="btn btn-outline-success w-100 mb-2">View Accepted Orders</a>
+				</div>
+				<div class="card-body">
+					   <a href="{% url 'admin_online_order_accept' id=1 %}" class="btn btn-outline-info w-100">Online Order Accept</a>
+				</div>
+			</div>
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-secondary text-white">
+					<h5 class="mb-0">Table Order Request</h5>
+				</div>
+				<div class="card-body">
+					<a href="#tableorder" class="btn btn-outline-secondary w-100">Table Order Request</a>
+				</div>
+			</div>
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-gradient text-white" style="background: linear-gradient(90deg, #27ae60 60%, #00bcd4 100%);">
+					<h5 class="mb-0">Sales Revenue</h5>
+				</div>
+				<div class="card-body">
+					<a href="{% url 'sales_revenue' %}" class="btn btn-success w-100 mb-2">View Sales Revenue</a>
+					<a href="{% url 'online_order_revenue' %}" class="btn btn-outline-success w-100">Online Order Revenue</a>
+				</div>
+			</div>
+			<div class="card shadow-sm mb-4">
+				<div class="card-header bg-danger text-white">
+					<h5 class="mb-0">Expense</h5>
+				</div>
+				<div class="card-body d-flex flex-column gap-2">
+					<a href="{% url 'add_expense' %}" class="btn btn-danger w-100">Add Expense</a>
+					<a href="{% url 'expense_list' %}" class="btn btn-outline-dark w-100">Expense List</a>
+				</div>
+			</div>
+		</div>
+		<!-- Main Content -->
+		<div class="col-md-9">
+			<div class="row">
+				   <!-- Order Status Overview as 3 boxes -->
+				   <div class="col-md-4 mb-4">
+					   <div class="card h-100 shadow-sm">
+						   <div class="card-header bg-primary text-white text-center">
+							   <h5 class="mb-0">Pending Orders</h5>
+						   </div>
+						   <div class="card-body d-flex flex-column justify-content-center align-items-center">
+							   <span class="display-4 fw-bold text-primary">{{ pending_count }}</span>
+						   </div>
+					   </div>
+				   </div>
+				   <div class="col-md-4 mb-4">
+					   <div class="card h-100 shadow-sm">
+						   <div class="card-header bg-warning text-dark text-center">
+							   <h5 class="mb-0">Preparing Orders</h5>
+						   </div>
+						   <div class="card-body d-flex flex-column justify-content-center align-items-center">
+							   <span class="display-4 fw-bold text-warning">{{ preparing_count }}</span>
+						   </div>
+					   </div>
+				   </div>
+				   <div class="col-md-4 mb-4">
+					   <div class="card h-100 shadow-sm">
+						   <div class="card-header bg-success text-white text-center">
+							   <h5 class="mb-0">Delivered Orders</h5>
+						   </div>
+						   <div class="card-body d-flex flex-column justify-content-center align-items-center">
+							   <span class="display-4 fw-bold text-success">{{ delivered_count }}</span>
+						   </div>
+					   </div>
+				   </div>
+				<div class="col-md-4 mb-4">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header bg-info text-white text-center">
+							<h5 class="mb-0">Main Category View</h5>
+						</div>
+						<div class="card-body d-flex flex-column justify-content-center align-items-center">
+							<a href="{% url 'maincat_view' %}" class="btn btn-info w-100">View Main Categories</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header bg-success text-white text-center">
+							<h5 class="mb-0">Category View</h5>
+						</div>
+						<div class="card-body d-flex flex-column justify-content-center align-items-center">
+							<a href="{% url 'cat_view' %}" class="btn btn-success w-100">cat_views</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header bg-warning text-dark text-center">
+							<h5 class="mb-0">Subcategory View</h5>
+						</div>
+						<div class="card-body d-flex flex-column justify-content-center align-items-center">
+							<a href="{% url 'subcat_view' %}" class="btn btn-warning w-100">subcat_views</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Revenue/Expense Bar Chart & Filter below category boxes -->
+			<div class="card mb-4 p-4 shadow-lg border-0" style="background: linear-gradient(135deg, #f8fafc 0%, #e3f0ff 100%); border-radius: 18px;">
+				<form method="get" class="d-flex gap-2 align-items-center flex-wrap mb-3">
+					<label for="filter" class="fw-bold">Show:</label>
+					<select name="filter" id="filter" class="form-select" style="max-width:180px;">
+						<option value="weekly" {% if filter_type == 'weekly' %}selected{% endif %}>Last 7 Days</option>
+						<option value="monthly" {% if filter_type == 'monthly' %}selected{% endif %}>Last Month</option>
+						<option value="3months" {% if filter_type == '3months' %}selected{% endif %}>Last 3 Months</option>
+						<option value="6months" {% if filter_type == '6months' %}selected{% endif %}>Last 6 Months</option>
+					</select>
+					<span class="fw-bold ms-3">Or</span>
+					<label for="start_date" class="fw-bold ms-2">From:</label>
+					<input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}">
+					<label for="end_date" class="fw-bold ms-2">To:</label>
+					<input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}">
+					<button type="submit" class="btn btn-primary">Apply</button>
+				</form>
+				<div class="mt-2 text-center">
+					{% if filter_type == 'custom' and start_date and end_date %}
+						<span class="fw-bold" style="font-size:1.1rem; color:#34495e; background:#e3f0ff; padding:6px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(52,73,94,0.08);">Showing data from {{ start_date|date:'d-m-Y' }} to {{ end_date|date:'d-m-Y' }}</span>
+					{% elif filter_type == 'weekly' %}
+						<span class="fw-bold" style="font-size:1.1rem; color:#34495e; background:#e3f0ff; padding:6px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(52,73,94,0.08);">Showing last 7 days</span>
+					{% elif filter_type == 'monthly' %}
+						<span class="fw-bold" style="font-size:1.1rem; color:#34495e; background:#e3f0ff; padding:6px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(52,73,94,0.08);">Showing last month</span>
+					{% elif filter_type == '3months' %}
+						<span class="fw-bold" style="font-size:1.1rem; color:#34495e; background:#e3f0ff; padding:6px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(52,73,94,0.08);">Showing last 3 months</span>
+					{% elif filter_type == '6months' %}
+						<span class="fw-bold" style="font-size:1.1rem; color:#34495e; background:#e3f0ff; padding:6px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(52,73,94,0.08);">Showing last 6 months</span>
+					{% endif %}
+				</div>
+				<div class="position-relative" style="height:320px;">
+					<canvas id="revenueExpenseLine" style="height:100%; width:100%;"></canvas>
+				</div>
+				<div class="mt-3 text-center">
+					<canvas id="onlineOrderLine" style="height:220px; width:100%;"></canvas>
+				</div>
+			</div>
+			<style>
+				#revenueExpenseLine {
+					background: linear-gradient(135deg, #e3f0ff 0%, #f8fafc 100%);
+					border-radius: 12px;
+					box-shadow: 0 4px 24px rgba(52,73,94,0.08);
+				}
+				.card.mb-4.p-4.shadow-lg {
+					box-shadow: 0 8px 32px rgba(52,73,94,0.12) !important;
+				}
+				.form-select, .form-control {
+					border-radius: 8px;
+					border: 1px solid #b2bec3;
+					box-shadow: 0 2px 8px rgba(52,73,94,0.04);
+				}
+				.btn-primary {
+					background: linear-gradient(90deg, #27ae60 60%, #00bcd4 100%);
+					border: none;
+					border-radius: 8px;
+					font-weight: 700;
+					letter-spacing: 1px;
+					box-shadow: 0 2px 8px rgba(39,174,96,0.08);
+				}
+			</style>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<script>
+				const ctx = document.getElementById('revenueExpenseLine').getContext('2d');
+				new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: {{ labels|safe }},
+						datasets: [
+							{
+								label: 'Revenue',
+								data: {{ revenue_data|safe }},
+								borderColor: '#27ae60',
+								backgroundColor: 'rgba(39,174,96,0.1)',
+								fill: false,
+								tension: 0.3,
+								pointRadius: 3,
+								pointBackgroundColor: '#27ae60',
+							},
+							{
+								label: 'Expense',
+								data: {{ expense_data|safe }},
+								borderColor: '#e74c3c',
+								backgroundColor: 'rgba(231,76,60,0.1)',
+								fill: false,
+								tension: 0.3,
+								pointRadius: 3,
+								pointBackgroundColor: '#e74c3c',
+							}
+						]
+					},
+					options: {
+						responsive: true,
+						plugins: {
+							legend: { position: 'top' },
+							title: { display: true, text: 'Revenue vs Expense (Daily)' }
+						},
+						scales: {
+							x: {
+								title: { display: true, text: 'Date' },
+								grid: { display: true }
+							},
+							y: {
+								beginAtZero: true,
+								title: { display: true, text: 'Amount (£)' },
+								grid: { display: true }
+							}
+						}
+					}
+				});
+				const onlineCtx = document.getElementById('onlineOrderLine').getContext('2d');
+				new Chart(onlineCtx, {
+					type: 'line',
+					data: {
+						labels: {{ labels|safe }},
+						datasets: [
+							{
+								label: 'Online Order Revenue',
+								data: {{ online_order_revenue_data|safe }},
+								borderColor: '#007bff',
+								backgroundColor: 'rgba(0,123,255,0.1)',
+								fill: false,
+								tension: 0.3,
+								pointRadius: 3,
+								pointBackgroundColor: '#007bff',
+							}
+						]
+					},
+					options: {
+						responsive: true,
+						plugins: {
+							legend: { position: 'top' },
+							title: { display: true, text: 'Online Order Revenue Trend' }
+						}
+					}
+				});
+			</script>
+		</div>
+	</div>
+</div>
+
+{% include 'footer.html' %}

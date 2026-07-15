@@ -1,0 +1,22 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="mb-4 text-center">Add Main Category</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="main_category" class="form-label">Main Category</label>
+                            <input type="text" class="form-control" id="main_category" name="category_name" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

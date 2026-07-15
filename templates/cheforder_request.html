@@ -1,0 +1,63 @@
+
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+	<div class="row mb-3">
+		<div class="col-6 d-flex justify-content-start">
+			<a href="{% url 'cheforder_accept' 0 %}" class="btn btn-success">Accept Order</a>
+		</div>
+		<div class="col-6 d-flex justify-content-end">
+			<a href="{% url 'chef_dashboard' %}" class="btn btn-warning">Dashboard</a>
+		</div>
+	</div>
+	
+	<h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#f39c12;">Order Requests</h2>
+	<table class="table table-bordered table-hover">
+		<thead class="table-light">
+			<tr>
+				<th>Order ID</th>
+				<th>Table Number</th>
+				<th>Items</th>
+				<th>Quantity</th>
+				<th>Placed Date/Time</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for order in orders %}
+			<tr>
+				<td>{{ order.id }}</td>
+				<td>{{ order.table_number }}</td>
+				<!-- Only show order id, table number, items, quantity, date/time, action -->
+				<td>
+					<ul class="mb-0">
+						{% for item in order.items.all %}
+						<li>{{ item.name }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+				<td>
+					<ul class="mb-0">
+						{% for item in order.items.all %}
+						<li>{{ item.qty }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+				<td>{{ order.created_at|date:'Y-m-d H:i' }}</td>
+				<td>
+					<a href="{% url 'cheforder_accept' order.id %}" class="btn btn-success btn-sm">Accept</a>
+					<a href="{% url 'cheforder_delete' order.id %}" class="btn btn-danger btn-sm">Reject</a>
+				</td>
+			</tr>
+			{% empty %}
+			<tr><td colspan="6" class="text-center">No order requests found.</td></tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="position-absolute" style="top: 20px; right: 20px;">
+		<a href="{% url 'cheforder_accept' 0 %}" class="btn btn-warning btn-sm">Go to Order Accept</a>
+	</div>
+</div>
+
+{% include 'footer.html' %}

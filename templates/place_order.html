@@ -1,0 +1,75 @@
+{% load static %}
+{% load currency_tags %}
+{% include 'header.html' %}
+
+<div class="receipt-box">
+    <div class="text-center receipt-title">Order Receipt</div>
+    <div class="order-accepted text-center mb-3">Order Accepted</div>
+    <div class="mb-2"><strong>Table Number:</strong> {{ table_number }}</div>
+    <table class="table table-bordered mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>Sl. No.</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.price|money:request.session.currency|default:'GBP' }}</td>
+                <td>{{ item.total|money:request.session.currency|default:'GBP' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-end mt-3">
+        <strong>Grand Total: {{ grand_total|money:request.session.currency|default:'GBP' }}</strong>
+    </div>
+    <div class="text-center">
+        <form method="post" action="">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success mb-3">Order Accept</button>
+        </form>
+    </div>
+    <div class=">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print
+        </button>
+    </div>
+</div>
+
+<style>
+.receipt-box {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1.5px solid #eee;
+    box-shadow: 0 0 16px #eee;
+    background: #fff;
+    border-radius: 12px;
+}
+.receipt-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #27ae60;
+    margin-bottom: 1rem;
+}
+.order-accepted {
+    color: #2980b9;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+.table th, .table td {
+    vertical-align: middle;
+}
+.print-btn {
+    margin-top: 2rem;
+}
+</style>

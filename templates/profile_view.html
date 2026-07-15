@@ -1,0 +1,35 @@
+{% load static %}
+{% include 'header.html' %}
+
+{% if debug_message %}
+<div class="alert alert-warning text-center">{{ debug_message }}</div>
+{% endif %}
+
+<div class="container mt-5 d-flex justify-content-center">
+	<div class="card shadow" style="max-width: 500px; width: 100%; border-radius: 20px;">
+		<div class="card-body text-center">
+			{% if user.image and user.image.url %}
+				<div style="display: flex; justify-content: center;">
+					<img src="{{ user.image.url }}" alt="User Photo" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; margin-bottom: 24px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+				</div>
+				<div style="width: 140px; height: 140px; background: #eee; color: #555; display: none; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 3rem; margin: 0 auto 24px auto;">
+					{{ user.name|slice:":2"|upper }}
+				</div>
+			{% else %}
+				<div style="width: 140px; height: 140px; background: #eee; color: #555; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 3rem; margin: 0 auto 24px auto;">
+					{{ user.name|slice:":2"|upper }}
+				</div>
+			{% endif %}
+			<h3 class="mb-2 d-flex align-items-center justify-content-center" style="font-size:2rem;">
+				{{ user.name }}
+				<span class="ms-2" title="Verified">
+					<i class="bi bi-patch-check-fill text-primary" style="font-size: 1.7rem;"></i>
+				</span>
+			</h3>
+			<p class="mb-3 text-muted" style="font-size:1.1rem;">{{ user.email }}</p>
+			<p class="mb-0" style="font-size:1.1rem;">{{ user.phone }}</p>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">

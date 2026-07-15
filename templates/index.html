@@ -1,0 +1,820 @@
+<!-- Popup Modal -->
+
+
+{% load static %}
+{% include 'header.html' %}
+<!-- Booking Popup Modal -->
+<div id="bookingModal" class="modal fade show" tabindex="-1" style="display:block; background:rgba(0,0,0,0.4); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; color:#222;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#fff; color:#222;">
+                <h5 class="modal-title fw-bold" style="color:#e67e22;">Booking Your Favorite Place</h5>
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeBookingModal()"></button>
+            </div>
+            <div class="modal-body text-center" style="background:#fff; color:#222;">
+                <h4 class="mb-3" style="color:#388e3c;">Quick and Easy Online Booking Available</h4>
+                <p class="lead mb-3" style="color:#222;">Book via our website in just a few clicks and savour our signature biryanis, spicy curries, fresh seafood, and traditional vegetarian dishes, hot and ready to be delivered to your doorstep.</p>
+                <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4">
+                    <a href="https://wa.me/919876543210" target="_blank" class="btn btn-success btn-lg px-4"><i class="bi bi-whatsapp me-2"></i>Book via WhatsApp</a>
+                    <a href="" class="btn btn-warning btn-lg px-4"><i class="bi bi-calendar-check me-2"></i>Book via Website</a>
+                </div>
+                <div class="mt-4">
+                    <h5 class="fw-bold mb-3" style="color:#00796b;">Order Via Our Delivery Partners</h5>
+                    <div class="d-flex justify-content-center align-items-center gap-4">
+                        <a href="https://deliveroo.co.uk/" target="_blank">
+                            <img src="{% static 'image/deliveroo.png' %}" alt="Deliveroo" style="height:40px;">
+                        </a>
+                        <a href="https://www.just-eat.co.uk/" target="_blank">
+                            <img src="{% static 'image/justeats.jpg' %}" alt="JustEat" style="height:40px;">
+                        </a>
+                        <a href="https://www.ubereats.com/gb" target="_blank">
+                            <img src="{% static 'image/ubereats.webp' %}" alt="UberEats" style="height:40px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background:#fff; color:#222;">
+                <button type="button" class="btn btn-primary" onclick="closeBookingModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function closeBookingModal() {
+    document.getElementById('bookingModal').style.display = 'none';
+}
+window.onload = function() {
+    document.getElementById('bookingModal').style.display = 'block';
+}
+</script>
+<!-- Animate.css CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<style>
+            /* Delivery Partner Card Styles for Modal */
+            /* Watermark Animation Styles */
+            .watermark-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                pointer-events: none;
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                /* No transform, full screen overlay */
+            }
+            .watermark-text {
+                font-family: 'Montserrat', 'Arial', sans-serif;
+                font-size: 5vw;
+                font-weight: 900;
+                letter-spacing: 0.15em;
+                color: #fff;
+                text-shadow: 0 4px 32px #e67e22, 0 2px 8px #388e3c, 0 0 32px #fff;
+                opacity: 0.18;
+                user-select: none;
+                white-space: nowrap;
+                filter: brightness(1.5) drop-shadow(0 2px 8px #e67e22);
+                position: absolute;
+                top: 0;
+                left: 0;
+                /* No animation, JS will move */
+            }
+            .watermark-text.street {
+                color: #e67e22;
+                text-shadow: 0 4px 32px #fff, 0 2px 8px #388e3c, 0 0 32px #e67e22;
+                opacity: 0.22;
+            }
+            @keyframes watermark-move {
+                /* Removed, replaced by watermark-bounce */
+            }
+            @keyframes watermark-bounce {
+                /* Removed, replaced by JS bounce */
+            }
+            }
+            .modal-partner-row {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                margin-top: 12px;
+            }
+            .modal-partner-card {
+                background: linear-gradient(135deg, #e0f7fa 60%, #fffde7 100%);
+                border: 2px solid #b2ebf2;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(44,62,80,0.10);
+                padding: 12px 18px;
+                text-align: center;
+                transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+            }
+            .modal-partner-card:hover {
+                border-color: #e67e22;
+                box-shadow: 0 8px 32px rgba(230,126,34,0.18);
+                transform: scale(1.04);
+            }
+            .modal-partner-logo {
+                height: 36px;
+                margin-bottom: 8px;
+            }
+            .modal-partner-name {
+                font-weight: 600;
+                font-size: 1rem;
+                color: #00796b;
+            }
+        /* Delivery Partner Card Styles */
+        .partner-card {
+            border: 2px solid #b2ebf2;
+            box-shadow: 0 4px 18px rgba(44,62,80,0.10);
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+            background: linear-gradient(135deg, #e0f7fa 60%, #fffde7 100%);
+        }
+        .partner-card:hover {
+            border-color: #e67e22;
+            box-shadow: 0 8px 32px rgba(230,126,34,0.18);
+            transform: scale(1.04);
+        }
+    .gallery-animate {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .gallery-animate:hover {
+        transform: scale(1.07);
+        box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+        border: 2px solid #e67e22;
+    }
+    .fade-in {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: fadeInUp 1s forwards;
+    }
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
+
+        <main class="order-page">
+            <!-- Watermark Overlay -->
+            <div class="watermark-container">
+                <span class="watermark-text kerala" id="watermarkKerala">KERALA</span>
+                <span class="watermark-text street" id="watermarkStreet">STREET</span>
+            </div>
+            <script>
+            // Watermark Ball Bounce Animation
+            function watermarkBounce(id, delay) {
+                const el = document.getElementById(id);
+                let x = Math.random() * (window.innerWidth - el.offsetWidth);
+                let y = Math.random() * (window.innerHeight - el.offsetHeight);
+                let vx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random());
+                let vy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random());
+                const speed = 0.7; // Slow movement
+                setTimeout(() => {
+                    function animate() {
+                        x += vx * speed;
+                        y += vy * speed;
+                        // Bounce off edges
+                        if (x <= 0 || x >= window.innerWidth - el.offsetWidth) {
+                            vx *= -1;
+                            x = Math.max(0, Math.min(x, window.innerWidth - el.offsetWidth));
+                        }
+                        if (y <= 0 || y >= window.innerHeight - el.offsetHeight) {
+                            vy *= -1;
+                            y = Math.max(0, Math.min(y, window.innerHeight - el.offsetHeight));
+                        }
+                        el.style.left = x + 'px';
+                        el.style.top = y + 'px';
+                        requestAnimationFrame(animate);
+                    }
+                    animate();
+                }, delay);
+            }
+            window.addEventListener('DOMContentLoaded', function() {
+                watermarkBounce('watermarkKerala', 0);
+                watermarkBounce('watermarkStreet', 2000);
+            });
+            </script>
+            <!-- Hero Section -->
+            <section class="section hero-section py-5 animate__animated animate__fadeIn" style="background: linear-gradient(90deg, #fff3e0 60%, #fffde7 100%);">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0 fade-in" style="animation-delay:0.2s;">
+                            <h1 class="display-3 fw-bold mb-3" style="color:#e67e22; letter-spacing:2px;">BOLD TASTE OF KERALA</h1>
+                            <h4 class="mb-3" style="color:#388e3c;">Now in Hounslow</h4>
+                            <p class="lead mb-4">Experience the rich, vibrant flavours of Kerala. Authentic South Indian cuisine made with traditional recipes, fresh ingredients, and a whole lot of love.</p>
+                            <a class="btn btn-warning btn-lg me-2" href="{% url 'menu_page' %}">Order Now</a>
+                            <a class="btn btn-outline-primary btn-lg" href="{% url 'book_table' %}">Reserve a Table</a>
+                        </div>
+                        {% comment %} <div class="col-lg-5 text-center animate__animated animate__zoomIn" style="animation-delay:0.5s;">
+                            {% if hero_image %}
+                                <img src="{{ hero_image.image.url }}" alt="Kerala Food" class="img-fluid rounded shadow-lg hero-img" style="max-height:340px; object-fit:cover; border: 4px solid #e67e22;">
+                            {% else %}
+                                <img src="{% static 'image/banner.jpg' %}" alt="Kerala Food" class="img-fluid rounded shadow-lg hero-img" style="max-height:340px; object-fit:cover; border: 4px solid #e67e22;">
+                            {% endif %}
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Delivery Partners Section -->
+            <section class="section delivery-partners py-5 animate__animated animate__fadeIn" style="background: linear-gradient(90deg, #e0f7fa 60%, #fffde7 100%);">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color:#00796b; font-size:2.3rem;">Our Delivery Partners</h2>
+                        <p class="text-muted">Order from your favorite delivery service</p>
+                    </div>
+                    <div class="row g-3 justify-content-center">
+                        <!-- Deliveroo Card -->
+                        <div class="col-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp" style="animation-delay:0.4s;">
+                            <a href="https://deliveroo.co.uk/" target="_blank">
+                                <div class="gallery-animate partner-anim p-3 rounded shadow-lg text-center" style="background:linear-gradient(135deg,#e0f7fa 60%,#fffde7 100%);">
+                                    <img src="{% static 'image/deliveroo.png' %}" class="img-fluid mb-2 animate__animated animate__bounceIn" style="height:80px; object-fit:contain; animation-delay:0.5s;">
+                                    <div class="fw-bold stylish-title animate__animated animate__pulse animate__infinite">Deliveroo</div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- JustEat Card -->
+                        <div class="col-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp" style="animation-delay:0.5s;">
+                            <a href="https://www.just-eat.co.uk/" target="_blank">
+                                <div class="gallery-animate partner-anim p-3 rounded shadow-lg text-center" style="background:linear-gradient(135deg,#fffde4 60%,#ffe0b2 100%);">
+                                    <img src="{% static 'image/justeats.jpg' %}" class="img-fluid mb-2 animate__animated animate__bounceIn" style="height:80px; object-fit:contain; animation-delay:0.6s;">
+                                    <div class="fw-bold stylish-title animate__animated animate__pulse animate__infinite">JustEat</div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- UberEats Card -->
+                        <div class="col-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp" style="animation-delay:0.6s;">
+                            <a href="https://www.ubereats.com/gb" target="_blank">
+                                <div class="gallery-animate partner-anim p-3 rounded shadow-lg text-center" style="background:linear-gradient(135deg,#e8f5e9 60%,#fffde7 100%);">
+                                    <img src="{% static 'image/ubereats.webp' %}" class="img-fluid mb-2 animate__animated animate__bounceIn" style="height:80px; object-fit:contain; animation-delay:0.7s;">
+                                    <div class="fw-bold stylish-title animate__animated animate__pulse animate__infinite">UberEats</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <style>
+                        .partner-anim:hover {
+                            animation: shakePartner 0.7s;
+                        }
+                        @keyframes shakePartner {
+                            0% { transform: scale(1) rotate(0deg); }
+                            20% { transform: scale(1.05) rotate(-2deg); }
+                            40% { transform: scale(1.08) rotate(2deg); }
+                            60% { transform: scale(1.05) rotate(-2deg); }
+                            80% { transform: scale(1.02) rotate(1deg); }
+                            100% { transform: scale(1) rotate(0deg); }
+                        }
+                    </style>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Gallery Section -->
+            <section id="gallery" class="section gallery-section py-5 bg-light animate__animated animate__fadeIn" style="animation-delay:0.3s;">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Gallery</h2>
+                        <p class="text-muted">A glimpse of our bestsellers and ambience</p>
+                    </div>
+                    <div class="row g-3 justify-content-center">
+                        {% if gallery_images %}
+                            {% for image in gallery_images %}
+                                <div class="col-6 col-md-4 col-lg-3 animate__animated animate__zoomIn" style="animation-delay:{{ forloop.counter0|add:0.4 }}s;">
+                                    <img src="{{ image.image.url }}" class="img-fluid rounded shadow-sm gallery-animate" alt="{{ image.description|default:'Gallery Image' }}">
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-6 col-md-4 col-lg-3 animate__animated animate__zoomIn" style="animation-delay:0.4s;">
+                                <img src="{% static 'image/appam beef.jpg' %}" class="img-fluid rounded shadow-sm gallery-animate" alt="Dish 1">
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-3 animate__animated animate__zoomIn" style="animation-delay:0.5s;">
+                                <img src="{% static 'image/Kerala-Cuisine-768x461.jpg' %}" class="img-fluid rounded shadow-sm gallery-animate" alt="Dish 2">
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-3 animate__animated animate__zoomIn" style="animation-delay:0.6s;">
+                                <img src="{% static 'image/Mutton-Biryani-Recipe-500x500.jpg' %}" class="img-fluid rounded shadow-sm gallery-animate" alt="Dish 3">
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-3 animate__animated animate__zoomIn" style="animation-delay:0.7s;">
+                                <img src="{% static 'image/seafood.jpg' %}" class="img-fluid rounded shadow-sm gallery-animate" alt="Ambience">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Special Offer Section -->
+            <section class="section special-offer-section py-5" style="background: linear-gradient(90deg, #fffbe6 60%, #ffe0b2 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="p-5 rounded-4 shadow-lg border-0 special-offer-card" style="background:linear-gradient(90deg,#ffe0b2 60%,#fffbe6 100%); color:#222; position:relative;">
+                    <div style="position:absolute;top:-30px;left:50%;transform:translateX(-50%);">
+                        <i class="bi bi-stars" style="font-size:3rem;color:#e67e22;filter:drop-shadow(0 2px 8px #e67e22aa);"></i>
+                    </div>
+                    <h2 class="fw-bold mb-2" style="color:#e67e22; font-size:2.2rem; margin-top:24px;">Special Offer</h2>
+                    <p class="lead mb-3" style="color:#388e3c; font-size:1.35rem; font-weight:600;">10% Off On All Collection Orders!</p>
+                    <p class="mb-0" style="font-size:1.08rem; color:#222;">Order online and pick up from our restaurant to enjoy this exclusive discount. <span style="color:#e67e22; font-weight:600;">Limited time only!</span></p>
+                    <a href="{% url 'menu_page' %}" class="btn btn-warning btn-lg mt-4 px-5 shadow" style="font-size:1.15rem; font-weight:600; border-radius:2em;">Order for Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="section about-section py-5 bg-white animate__animated animate__fadeIn" style="animation-delay:0.4s;">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h2 class="fw-bold mb-3" style="color:#e67e22;">About Us</h2>
+                            <p class="lead" style="color:#222;">Kerala Street brings the bold taste of Kerala to Hounslow. Our chefs use traditional recipes and fresh ingredients to create authentic South Indian dishes. Visit us for a true Kerala experience!</p>
+                            <ul class="list-unstyled mt-3" style="color:#222; font-size:1.08rem;">
+                                <li><strong style="color:#e67e22;">Location:</strong> 123 Kerala Street, Hounslow</li>
+                                <li><strong style="color:#e67e22;">Email:</strong> info@keralastreet.com</li>
+                                <li><strong style="color:#e67e22;">Phone:</strong> +91 98765 43210</li>
+                                <li><strong style="color:#e67e22;">Hours:</strong> 11:00 AM – 11:00 PM</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6 text-center">
+                            <img src="{% static 'image/seafood.jpg' %}" alt="Restaurant" class="img-fluid rounded shadow" style="max-height:300px; object-fit:cover;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+                        <!-- Navigation Bar (if not already in header.html) -->
+                        <!-- Add navigation bar in header.html for Home, About, Gallery, Menu, Booking, Reviews, Blog -->
+                        <!-- Footer Section -->
+                        <footer class="footer bg-dark text-white py-4 mt-5">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <h5 class="fw-bold">Kerala Street</h5>
+                                        <p class="mb-1">123 Kerala Street, Hounslow</p>
+                                        <p class="mb-1">info@keralastreet.com</p>
+                                        <p class="mb-0">+91 98765 43210</p>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                                        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+                                        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                                        <p class="mt-2 mb-0">&copy; 2026 Kerala Street. All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+            <section class="section order-hero">
+                <div class="container">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-7">
+                            <p class="eyebrow">Order Online</p>
+                            <h1>Order from Kerala Street</h1>
+                            <p class="hero-subtitle">Fast delivery in Hounslow</p>
+                            <p class="lead">Choose your dishes, add to cart, and checkout. We will confirm your order
+                                immediately and deliver fresh, hot meals to your doorstep.</p>
+                            <div class="hero-actions">
+                                <a class="btn btn-hero" href="{% url 'menu_page' %}">Browse Menu</a>
+                                <a class="btn btn-outline-hero" href="https://wa.me/919876543210" target="_blank">Order via WhatsApp</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="order-card">
+                                <p class="eyebrow">How it works</p>
+                                <div class="order-steps">
+                                    <div class="order-step"><i class="bi bi-bag-check"></i> Select items</div>
+                                    <div class="order-step"><i class="bi bi-cart4"></i> Add to cart</div>
+                                    <div class="order-step"><i class="bi bi-credit-card"></i> Checkout & Pay</div>
+                                </div>
+                                <div class="order-note">Delivery time: 35-50 mins (within 6 km)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                        <!-- Dynamic Menu Section (copied from order.html) -->
+                                    <!-- Why Choose Us Section -->
+                                    <section class="section why-choose-section py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color:#e67e22; font-size:2.3rem; letter-spacing:1px;">Why Choose Us?</h2>
+            <p class="text-dark" style="font-size:1.15rem;">Discover what makes Kerala Street special.</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-3 mb-3 animate__animated animate__fadeInUp" style="animation-delay:0.3s;">
+                <div class="card why-anim shadow-lg border-0 text-center p-4" style="background:linear-gradient(90deg,#fffbe6 60%,#ffe0b2 100%); color:#222;">
+                    <i class="bi bi-award fs-1 text-warning mb-2 animate__animated animate__bounceIn" style="animation-delay:0.4s;"></i>
+                    <h5 class="card-title animate__animated animate__pulse animate__infinite" style="color:#e67e22; font-weight:700;">Authentic Recipes</h5>
+                    <p class="card-text" style="font-size:1.08rem;">Traditional Kerala dishes made with original spices and methods.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 animate__animated animate__fadeInUp" style="animation-delay:0.4s;">
+                <div class="card why-anim shadow-lg border-0 text-center p-4" style="background:linear-gradient(90deg,#e0f7fa 60%,#b2ebf2 100%); color:#222;">
+                    <i class="bi bi-truck fs-1 text-success mb-2 animate__animated animate__bounceIn" style="animation-delay:0.5s;"></i>
+                    <h5 class="card-title animate__animated animate__pulse animate__infinite" style="color:#388e3c; font-weight:700;">Fast Delivery</h5>
+                    <p class="card-text" style="font-size:1.08rem;">Hot and fresh food delivered quickly to your doorstep.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 animate__animated animate__fadeInUp" style="animation-delay:0.5s;">
+                <div class="card why-anim shadow-lg border-0 text-center p-4" style="background:linear-gradient(90deg,#fffde4 60%,#ffe0b2 100%); color:#222;">
+                    <i class="bi bi-people fs-1 text-primary mb-2 animate__animated animate__bounceIn" style="animation-delay:0.6s;"></i>
+                    <h5 class="card-title animate__animated animate__pulse animate__infinite" style="color:#007bff; font-weight:700;">Family Friendly</h5>
+                    <p class="card-text" style="font-size:1.08rem;">A welcoming atmosphere for families and groups.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 animate__animated animate__fadeInUp" style="animation-delay:0.6s;">
+                <div class="card why-anim shadow-lg border-0 text-center p-4" style="background:linear-gradient(90deg,#ffe0b2 60%,#fffbe6 100%); color:#222;">
+                    <i class="bi bi-star fs-1 text-warning mb-2 animate__animated animate__bounceIn" style="animation-delay:0.7s;"></i>
+                    <h5 class="card-title animate__animated animate__pulse animate__infinite" style="color:#e67e22; font-weight:700;">Premium Quality</h5>
+                    <p class="card-text" style="font-size:1.08rem;">We use only the freshest ingredients for every dish.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 animate__animated animate__fadeInUp" style="animation-delay:0.7s;">
+                <div class="card why-anim shadow-lg border-0 text-center p-4" style="background:linear-gradient(90deg,#e0f7fa 60%,#fffde4 100%); color:#222;">
+                    <i class="bi bi-emoji-smile fs-1 text-success mb-2 animate__animated animate__bounceIn" style="animation-delay:0.8s;"></i>
+                    <h5 class="card-title animate__animated animate__pulse animate__infinite" style="color:#388e3c; font-weight:700;">Friendly Service</h5>
+                    <p class="card-text" style="font-size:1.08rem;">Our staff ensures a pleasant dining experience for all.</p>
+                </div>
+            </div>
+            <style>
+                .why-anim:hover {
+                    animation: shakePartner 0.7s;
+                }
+            </style>
+        </div>
+    </div>
+                                    </section>
+                                    <!-- Latest News Section -->
+                                    <section class="section news-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color:#e67e22; font-size:2.1rem; letter-spacing:1px;">Latest News</h2>
+            <p class="text-dark" style="font-size:1.12rem;">Stay updated with our latest offers and events.</p>
+        </div>
+        <div class="row justify-content-center g-4">
+            {% if news_items %}
+                {% for news in news_items %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-0 shadow-lg p-4 rounded-4" style="background:linear-gradient(90deg,#fffbe6 60%,#ffe0b2 100%); color:#222; position:relative;">
+                            <div style="position:absolute;top:-28px;left:30px;">
+                                <i class="bi bi-bell-fill animate__animated animate__tada animate__infinite" style="font-size:2.2rem;color:#e67e22;filter:drop-shadow(0 2px 8px #e67e22aa);"></i>
+                            </div>
+                            <h5 class="card-title fw-bold mb-2" style="color:#388e3c; font-size:1.3rem; margin-top:18px;">{{ news.title }}</h5>
+                            {% if news.content %}
+                                <p class="card-text" style="font-size:1.08rem;">{{ news.content }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-md-6 mb-3">
+                    <div class="card border-0 shadow-lg p-4 rounded-4" style="background:linear-gradient(90deg,#fffbe6 60%,#ffe0b2 100%); color:#222; position:relative;">
+                        <div style="position:absolute;top:-28px;left:30px;">
+                            <i class="bi bi-bell-fill animate__animated animate__tada animate__infinite" style="font-size:2.2rem;color:#e67e22;filter:drop-shadow(0 2px 8px #e67e22aa);"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-2" style="color:#388e3c; font-size:1.3rem; margin-top:18px;">Summer Festival: Free Dessert!</h5>
+                        <h5 class="card-title fw-bold mb-2" style="color:#388e3c; font-size:1.3rem; margin-top:18px;">Kerala Street Special: 15% Off!</h5>
+                        <h5 class="card-title fw-bold mb-2" style="color:#388e3c; font-size:1.3rem; margin-top:18px;">Latest Offer</h5>
+                        <p class="card-text" style="font-size:1.08rem;">Stay tuned for exciting deals and discounts! Check back regularly for our latest offers.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-0 shadow-lg p-4 rounded-4" style="background:linear-gradient(90deg,#e0f7fa 60%,#fffde4 100%); color:#222; position:relative;">
+                        <div style="position:absolute;top:-28px;left:30px;">
+                            <i class="bi bi-egg-fried" style="font-size:2.2rem;color:#388e3c;filter:drop-shadow(0 2px 8px #388e3c88);"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-2" style="color:#e67e22; font-size:1.3rem; margin-top:18px;">New Menu Launch</h5>
+                        <p class="card-text" style="font-size:1.08rem;">Try our new range of vegetarian and seafood specials, now available for dine-in and delivery.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+                                    </section>
+                                    <!-- Contact Section -->
+                                    <section class="section contact-section py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="p-5 rounded-4 shadow-lg border-0 contact-card" style="background:linear-gradient(90deg,#e0f7fa 60%,#fffde4 100%); color:#222; position:relative;">
+                    <div style="position:absolute;top:-28px;left:30px;">
+                        <i class="bi bi-envelope-paper" style="font-size:2.2rem;color:#e67e22;filter:drop-shadow(0 2px 8px #e67e22aa);"></i>
+                    </div>
+                    <h2 class="fw-bold mb-3" style="color:#388e3c; font-size:2rem; margin-top:18px;">Contact Us</h2>
+                    <p class="mb-2" style="font-size:1.12rem;"><i class="bi bi-geo-alt-fill me-2" style="color:#e67e22;"></i> <span style="font-weight:600;">Kerala Street Restaurant, Hounslow</span></p>
+                    <p class="mb-2" style="font-size:1.12rem;"><i class="bi bi-telephone-fill me-2" style="color:#388e3c;"></i> <a href="tel:+919876543210" style="color:#222; text-decoration:none; font-weight:600;">+91 98765 43210</a></p>
+                    <p class="mb-2" style="font-size:1.12rem;"><i class="bi bi-envelope-fill me-2" style="color:#e67e22;"></i> <a href="mailto:info@keralastreet.com" style="color:#222; text-decoration:none; font-weight:600;">info@keralastreet.com</a></p>
+                    <p class="mb-0" style="font-size:1.12rem;"><i class="bi bi-clock-fill me-2" style="color:#388e3c;"></i> <span style="font-weight:600;">Open: 11:00 AM - 11:00 PM (All days)</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+                                    </section>
+                        <section class="section highlight-menu py-5" style="background: linear-gradient(90deg, #fffbe6 60%, #e0f7fa 100%);">
+                            <div class="container">
+                                <div class="row justify-content-center align-items-center">
+                                    <div class="col-lg-8 text-center mb-4">
+                                        <h2 class="fw-bold mb-3" style="color:#e67e22; font-size:2.3rem;">Discover Our Kerala Flavours</h2>
+                                        <p class="lead mb-4" style="color:#388e3c; font-size:1.25rem;">From spicy seafood to coconut-rich curries, every dish is a celebration of Kerala's culinary heritage. Order now and experience the taste of tradition!</p>
+                                        <a href="{% url 'menu_page' %}" class="btn btn-warning btn-lg px-5 shadow" style="font-size:1.15rem; font-weight:600; border-radius:2em;">Browse Menu</a>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center g-4 mt-2">
+                                    <div class="col-md-4">
+                                        <div class="card shadow-lg border-0 text-center p-4 stylish-card">
+                                            <i class="bi bi-award fs-1 text-warning mb-2"></i>
+                                            <h5 class="card-title" style="color:#e67e22; font-weight:700;">Authentic Recipes</h5>
+                                            <p class="card-text" style="font-size:1.08rem;">Traditional Kerala dishes made with original spices and methods.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card shadow-lg border-0 text-center p-4 stylish-card">
+                                            <i class="bi bi-truck fs-1 text-success mb-2"></i>
+                                            <h5 class="card-title" style="color:#388e3c; font-weight:700;">Fast Delivery</h5>
+                                            <p class="card-text" style="font-size:1.08rem;">Hot and fresh food delivered quickly to your doorstep.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card shadow-lg border-0 text-center p-4 stylish-card">
+                                            <i class="bi bi-star fs-1 text-warning mb-2"></i>
+                                            <h5 class="card-title" style="color:#e67e22; font-weight:700;">Premium Quality</h5>
+                                            <p class="card-text" style="font-size:1.08rem;">We use only the freshest ingredients for every dish.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+        <!-- Kerala Culture Section -->
+        <section class="section culture-section py-5" style="background: linear-gradient(90deg, #e0f7fa 60%, #fffde4 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{% static 'image/kerala_street_testimonial.jpg' %}" alt="Kerala Backwaters" class="img-fluid rounded-4 shadow-lg" style="max-height:260px; object-fit:cover; border:4px solid #e67e22;">
+            </div>
+            <div class="col-lg-6">
+                <div class="p-4 rounded-4 shadow-lg border-0" style="background:linear-gradient(90deg,#fffbe6 60%,#e0f7fa 100%); color:#222;">
+                    <h2 class="fw-bold mb-2" style="color:#00796b; font-size:2rem;">Kerala: God's Own Country</h2>
+                    <p class="lead mb-3" style="color:#222; font-size:1.15rem;">Kerala is renowned for its lush landscapes, tranquil backwaters, and vibrant traditions. Our menu brings you the authentic taste of Kerala, from spicy seafood to coconut-rich curries and delicious snacks.</p>
+                    <ul class="list-unstyled" style="font-size:1.08rem; color:#222;">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:#e67e22;"></i><span style="font-weight:600;">Traditional Kerala Sadhya</span></li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:#388e3c;"></i><span style="font-weight:600;">Fresh seafood specialties</span></li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:#e67e22;"></i><span style="font-weight:600;">Homemade pickles and chutneys</span></li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color:#388e3c;"></i><span style="font-weight:600;">Authentic Malabar biriyani</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="section testimonials-section py-5 bg-light">
+    <div class="container">
+
+    <style>
+        .stylish-maincat {
+            background: linear-gradient(135deg, #fffbe6 60%, #ffe0b2 100%);
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(230,126,34,0.07);
+            padding: 1rem 0.5rem;
+        }
+        .stylish-cat {
+            background: linear-gradient(135deg, #e0f7fa 60%, #b2ebf2 100%);
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+            padding: 1rem 0.5rem;
+        }
+        .stylish-subcat {
+            background: linear-gradient(135deg, #fffde4 60%, #f8fafc 100%);
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.05);
+            padding: 1rem 0.5rem;
+        }
+        .hero-section {
+            border-radius: 0 0 32px 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        .hero-img {
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(230,126,34,0.12);
+            transition: transform 0.4s;
+        }
+        .hero-img:hover {
+            transform: scale(1.04) rotate(-2deg);
+        }
+        .gallery-section img {
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .gallery-section img:hover {
+            transform: scale(1.07);
+            box-shadow: 0 6px 24px rgba(230,126,34,0.18);
+        }
+        .special-offer-section .p-4 {
+            background: linear-gradient(90deg, #fffbe6 60%, #ffe0b2 100%);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(230,126,34,0.10);
+        }
+        .order-card {
+            border-radius: 16px;
+            background: #fffde4;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 18px;
+        }
+        .order-step {
+            font-weight: 500;
+            color: #e67e22;
+            margin-bottom: 8px;
+        }
+        .order-layout {
+            background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+            border-radius: 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            margin-bottom: 32px;
+        }
+        /* Stylish menu card redesign */
+        .stylish-card {
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 32px rgba(44,62,80,0.13);
+            background: linear-gradient(135deg, #fffbe6 60%, #e0f7fa 100%);
+            transition: box-shadow 0.3s, transform 0.3s;
+            border: none;
+        }
+        .stylish-card:hover {
+            box-shadow: 0 12px 48px rgba(230,126,34,0.18);
+            transform: scale(1.04);
+        }
+        .stylish-img {
+            border-radius: 1.5rem 1.5rem 0 0;
+            height: 160px;
+            object-fit: cover;
+            box-shadow: 0 2px 12px rgba(230,126,34,0.10);
+        }
+        .stylish-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #e67e22;
+        }
+        .stylish-price {
+            font-size: 1.1rem;
+        }
+        .stylish-offer-price {
+            font-size: 1.2rem;
+            color: #27ae60;
+        }
+        .stylish-main-price {
+            font-size: 1.2rem;
+            color: #e67e22;
+        }
+        .stylish-offer {
+            font-size: 0.9rem;
+            padding: 0.4em 0.8em;
+            border-radius: 1em;
+            background: linear-gradient(90deg,#e74c3c 60%,#e67e22 100%);
+        }
+        .stylish-desc {
+            min-height: 40px;
+            font-size: 0.95rem;
+        }
+        .stylish-search {
+            border-radius: 2em;
+            border: 1.5px solid #e67e22;
+            box-shadow: 0 2px 8px rgba(230,126,34,0.07);
+        }
+        .stylish-search-btn {
+            border-radius: 2em;
+            font-weight: 600;
+            background: #e67e22;
+            color: #fff;
+            border: none;
+        }
+        .stylish-search-btn:hover {
+            background: #d35400;
+        }
+        .stylish-hr {
+            border-top: 1.5px solid #e67e22;
+            margin: 0.5em 0;
+        }
+        @media (max-width: 991px) {
+            .order-layout .row > nav,
+            .order-layout .row > aside {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+            .order-layout .row > main {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 575px) {
+            .stylish-card {
+                border-radius: 1rem;
+                padding: 0.5rem;
+            }
+            .stylish-img {
+                height: 120px;
+            }
+            .stylish-title {
+                font-size: 1rem;
+            }
+            .stylish-desc {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.gallery-animate').forEach(function(img, i) {
+                img.style.opacity = 0;
+                setTimeout(function() {
+                    img.style.transition = 'opacity 0.7s, transform 0.7s';
+                    img.style.opacity = 1;
+                    img.style.transform = 'scale(1.04)';
+                    setTimeout(function() { img.style.transform = ''; }, 700);
+                }, 200 + i * 120);
+            });
+
+            // Food search functionality
+                                    // Quantity up/down button logic and sync with form
+                                    document.querySelectorAll('.subcat-card').forEach(function(card) {
+                                        const minusBtn = card.querySelectorAll('.qty-btn')[0];
+                                        const plusBtn = card.querySelectorAll('.qty-btn')[1];
+                                        const qtyInput = card.querySelector('.qty-input');
+                                        const formQtyInput = card.querySelector('.cart-qty-input');
+                                        minusBtn.onclick = function() {
+                                            let val = parseInt(qtyInput.value) || 1;
+                                            if (val > 1) qtyInput.value = val - 1;
+                                            if (formQtyInput) formQtyInput.value = qtyInput.value;
+                                        };
+                                        plusBtn.onclick = function() {
+                                            let val = parseInt(qtyInput.value) || 1;
+                                            qtyInput.value = val + 1;
+                                            if (formQtyInput) formQtyInput.value = qtyInput.value;
+                                        };
+                                        qtyInput.addEventListener('input', function() {
+                                            if (formQtyInput) formQtyInput.value = qtyInput.value;
+                                        });
+                                    });
+            const searchBtn = document.getElementById('searchBtn');
+            if (searchBtn) {
+                searchBtn.onclick = function() {
+                    const query = document.getElementById('foodSearch').value.trim().toLowerCase();
+                    document.querySelectorAll('.subcat-card').forEach(card => {
+                        const name = card.querySelector('.card-title').textContent.trim().toLowerCase();
+                        if (!query || name.includes(query)) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                };
+                document.getElementById('foodSearch').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+            }
+
+            // Show categories for selected main category
+            document.querySelectorAll('.main-category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.main-category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const mainId = this.dataset.mainId;
+                    document.querySelectorAll('.category-btn').forEach(catBtn => {
+                        if (catBtn.dataset.mainId === mainId) {
+                            catBtn.style.display = '';
+                        } else {
+                            catBtn.style.display = 'none';
+                            catBtn.classList.remove('active');
+                        }
+                    });
+                    document.querySelectorAll('.subcat-card').forEach(card => card.style.display = 'none');
+                });
+            });
+
+            // Show subcategories for selected category
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const catId = this.dataset.catId;
+                    document.querySelectorAll('.subcat-card').forEach(card => {
+                        if (card.dataset.catId === catId) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Optionally: auto-select first main category on load
+            const firstMain = document.querySelector('.main-category-btn');
+            if (firstMain) firstMain.click();
+        });
+    </script>
+    {% include 'footer.html' %}
+</section>

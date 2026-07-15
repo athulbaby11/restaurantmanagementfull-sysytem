@@ -1,0 +1,41 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<a href="javascript:history.back()" class="btn btn-link mb-3" style="font-size: 1.2rem; text-decoration: none;">
+	&#8592; Back
+</a>
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow">
+				<div class="card-body">
+					<h3 class="mb-4 text-center">Main Categories</h3>
+					<table class="table table-bordered table-striped text-center">
+						<thead class="table-dark">
+							<tr>
+								<th>Main Category</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for cat in main_categories %}
+							<tr>
+								<td>{{ cat.name }}</td>
+								<td>
+									<form method="post" action="{% url 'maincat_delete' cat.id %}" style="display:inline;">
+										{% csrf_token %}
+										<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+									</form>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.html' %}

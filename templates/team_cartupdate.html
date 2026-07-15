@@ -1,0 +1,62 @@
+{% load static %}
+{% load currency_tags %}
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#f39c12;">Update Team Cart</h2>
+    {% if table_cart %}
+        <form method="post" action="{% url 'update_team_cart_item' %}">
+            {% csrf_token %}
+            <input type="hidden" name="table_number" value="{{ table_number }}">
+            <table class="table table-bordered mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Item</th>
+                        <th>Current Qty</th>
+                        <th>Update Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, item in table_cart.items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>
+                            <input type="number" name="qty_{{ key }}" value="{{ item.qty }}" min="0" class="form-control" style="width:80px;">
+                            <input type="hidden" name="subcat_id_{{ key }}" value="{{ key }}">
+                        </td>
+                        <td>{{ item.price|money:request.session.currency|default:'GBP' }}</td>
+                        <td>{{ item.price|money:request.session.currency|default:'GBP' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-success">Update Cart</button>
+            </div>
+        </form>
+        <div class="mt-4">
+            <strong>Subtotal: {{ subtotal|money:request.session.currency|default:'GBP' }}</strong><br>
+            <strong>VAT (20%): {{ vat|money:request.session.currency|default:'GBP' }}</strong><br>
+            <strong>Total: {{ total|money:request.session.currency|default:'GBP' }}</strong>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">No items found for this table.</div>
+    {% endif %}
+    <div class="text-center mt-4">
+        <a href="{% url 'order_view' table_number=table_number %}" class="btn btn-primary add-more-btn">Add More</a>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+<style>
+.add-more-btn {
+    font-size: 1.3rem;
+    padding: 0.75rem 2.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+}
+</style>

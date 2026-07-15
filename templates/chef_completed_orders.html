@@ -1,0 +1,100 @@
+{% load static %}
+{% include 'header.html' %}
+
+<style>
+.completed-orders-table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(39,174,96,0.08);
+    background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+}
+.completed-orders-table th {
+    background: linear-gradient(90deg, #27ae60 60%, #00bcd4 100%);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+    border: none;
+}
+.completed-orders-table td {
+    background: #fff;
+    font-size: 1rem;
+    border: none;
+    vertical-align: middle;
+}
+.completed-orders-table tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+.completed-orders-table tr:last-child {
+    border-bottom: none;
+}
+.completed-orders-table .serial-boost {
+    background: linear-gradient(90deg, #00bcd4 60%, #27ae60 100%);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 2px 10px;
+    box-shadow: 0 2px 8px rgba(39,174,96,0.08);
+}
+.completed-orders-table .table-number-boost {
+    background: linear-gradient(90deg, #ffeb3b 60%, #00bcd4 100%);
+    color: #333;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 2px 10px;
+    box-shadow: 0 2px 8px rgba(39,174,96,0.08);
+}
+</style>
+
+<div class="container mt-5">
+    <div class="row mb-3">
+		<div class="col-6 d-flex justify-content-start">
+			<a href="{% url 'cheforder_request' %}" class="btn btn-warning">Order Request</a>
+		</div>
+		<div class="col-6 d-flex justify-content-end">
+			<a href="{% url 'chef_dashboard' %}" class="btn btn-success">Dashboard</a>
+		</div>
+    </div>
+    <h2 class="mb-4 text-center" style="font-weight:700; letter-spacing:2px; color:#27ae60;">Completed Orders</h2>
+    <table class="table table-bordered table-hover completed-orders-table">
+        <thead class="table-light">
+            <tr>
+                <th>Sl. No</th>
+                <th>Order ID</th>
+                <th>Table Number</th>
+                <th>Placed Date/Time</th>
+                <th>Amount</th>
+                <th>GST (20%)</th>
+                <th>Total</th>
+                <th>Delivered At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders|slice:':20' %}
+            <tr>
+                <td class="serial-boost">{{ forloop.counter }}</td>
+                <td>{{ order.order_id }}</td>
+                <td class="table-number-boost">{{ order.table_number }}</td>
+                <td>{{ order.placed_at|date:'Y-m-d H:i' }}</td>
+                <td>£{{ order.amount|floatformat:2 }}</td>
+                <td>£{{ order.gst|floatformat:2 }}</td>
+                <td>£{{ order.total|floatformat:2 }}</td>
+                <td>{{ order.delivered_at|date:'Y-m-d H:i' }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <div style="color:#aaa; font-size:1.3rem;">
+                        No completed orders found.
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="position-absolute" style="top: 20px; right: 20px; display: flex; gap: 8px;">
+        <a href="javascript:history.back()" class="btn btn-warning btn-sm">Back</a>
+        <a href="{% url 'chef_dashboard' %}" class="btn btn-success btn-sm">Dashboard</a>
+    </div>
+</div>
+{% include 'footer.html' %}

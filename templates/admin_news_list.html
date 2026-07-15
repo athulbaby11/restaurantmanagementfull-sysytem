@@ -1,0 +1,34 @@
+{% load static %}
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h2 class="mb-4">News</h2>
+    <a href="{% url 'admin_news_add' %}" class="btn btn-primary mb-3">Add News</a>
+    {% if request.GET.deleted %}
+        <div class="alert alert-success">News deleted successfully.</div>
+    {% endif %}
+    {% if request.GET.notfound %}
+        <div class="alert alert-warning">News item not found or already deleted.</div>
+    {% endif %}
+    <div class="row">
+        {% for news in news_items %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ news.title }}</h5>
+                    <p class="card-text">{{ news.content }}</p>
+                    <small class="text-muted">{{ news.date }}</small>
+                    <div class="mt-2">
+                        <a href="{% url 'admin_news_edit' news.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'admin_news_delete' news.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this news item?');">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No news items found.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.html' %}
