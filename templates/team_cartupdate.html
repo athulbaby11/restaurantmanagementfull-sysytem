@@ -39,7 +39,7 @@
         </form>
         <div class="mt-4">
             <strong>Subtotal: {{ subtotal|money:request.session.currency|default:'GBP' }}</strong><br>
-            <strong>VAT (20%): {{ vat|money:request.session.currency|default:'GBP' }}</strong><br>
+            <strong>Tax: {{ vat|money:request.session.currency|default:'GBP' }}</strong><br>
             <strong>Total: {{ total|money:request.session.currency|default:'GBP' }}</strong>
         </div>
     {% else %}

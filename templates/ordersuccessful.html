@@ -36,7 +36,7 @@
             </table>
 
             <div class="text-end fw-bold">Subtotal: {{ subtotal|money:currency }}</div>
-            <div class="text-end">VAT (20%): {{ vat|money:currency }}</div>
+            <div class="text-end">Tax: {{ vat|money:currency }}</div>
             <div class="text-end fs-5 fw-bold">Total: {{ grand_total_with_vat|money:currency }}</div>
             {% endwith %}
 

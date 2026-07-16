@@ -144,7 +144,9 @@ def place_order(request):
             except SubCategory.DoesNotExist:
                 subcat = None
             if subcat and subcat.vat_status == 'include':
-                vat += item_total * 0.2
+                rate = float(subcat.tax_percentage or 0)
+                if rate > 0:
+                    vat += item_total * (rate / 100)
         total = subtotal + vat
 
         # Persist totals on the order for reporting.
@@ -213,6 +215,27 @@ def place_order(request):
 
 def load_team_app(request):
     return HttpResponse("Team App Loaded Successfully")
+
+
+def _calculate_team_cart_totals(cart):
+    subtotal = 0
+    vat = 0
+    subcat_ids = [key for key in cart.keys()]
+    subcat_map = {
+        str(subcat.id): subcat
+        for subcat in SubCategory.objects.filter(id__in=subcat_ids).only('id', 'vat_status', 'tax_percentage')
+    }
+
+    for key, item in cart.items():
+        item_subtotal = item['price'] * item['qty']
+        subtotal += item_subtotal
+        subcat = subcat_map.get(str(key))
+        if subcat and subcat.vat_status == 'include':
+            rate = float(subcat.tax_percentage or 0)
+            if rate > 0:
+                vat += item_subtotal * (rate / 100)
+
+    return subtotal, vat, subtotal + vat
 
 def profile_view(request):
     # Get the logged-in user's email from session
@@ -321,9 +344,7 @@ def team_cart(request):
             item_copy = item.copy()
             item_copy['subtotal'] = item['price'] * item['qty']
             cart_with_subtotals[key] = item_copy
-        total = sum(item['subtotal'] for item in cart_with_subtotals.values())
-        vat = total * 0.2
-        grand_total = total + vat
+        total, vat, grand_total = _calculate_team_cart_totals(cart_with_subtotals)
         # Fetch latest order for this table
         latest_order = Order.objects.filter(table_number=table_num).order_by('-created_at').first()
         order_created_at = latest_order.created_at if latest_order else None
@@ -374,9 +395,7 @@ def update_team_cart_item(request):
     # GET: show update form for selected table
     table_number = request.GET.get('table_number')
     table_cart = team_carts.get(table_number, {}) if table_number else {}
-    subtotal = sum(item['price'] * item['qty'] for item in table_cart.values())
-    vat = subtotal * 0.2
-    total = subtotal + vat
+    subtotal, vat, total = _calculate_team_cart_totals(table_cart)
     return render(request, 'team_cartupdate.html', {
         'table_number': table_number,
         'table_cart': table_cart,

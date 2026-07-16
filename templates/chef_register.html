@@ -42,6 +42,14 @@
                         <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')"><i class="bi bi-eye"></i></button>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label for="captcha" class="form-label">CAPTCHA</label>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <img src="{{ captcha_image_url }}" alt="CAPTCHA" style="height: 44px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <input type="hidden" name="captcha_key" value="{{ captcha_key }}">
+                    <input type="text" name="captcha" id="captcha" class="form-control form-control-sm" required placeholder="Enter captcha text">
+                </div>
                 <script>
                 function togglePassword(fieldId) {
                     var pwd = document.getElementById(fieldId);

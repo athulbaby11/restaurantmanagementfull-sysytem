@@ -1,3 +1,4 @@
 Django==6.0.2
 Pillow==12.1.1
 python-escpos==3.1
+django-simple-captcha==0.6.2

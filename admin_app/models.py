@@ -15,11 +15,12 @@ class SubCategory(models.Model):
     image = models.ImageField(upload_to='subcategory_images/', blank=True, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     offer_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     description = models.TextField(max_length=420, blank=True, null=True)
     is_available = models.BooleanField(default=True)
     VAT_CHOICES = [
-        ('include', 'VAT include'),
-        ('vatl_include', 'VATL include'),
+        ('include', 'Tax include'),
+        ('vatl_include', 'Tax line include'),
         ('not_include', 'Not include'),
     ]
     vat_status = models.CharField(max_length=20, choices=VAT_CHOICES, default='not_include')
@@ -34,7 +35,7 @@ class userdetails(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=15)
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=128)
     image = models.ImageField(upload_to='user_images/')
     is_team = models.BooleanField(default=False)
 
@@ -51,7 +52,7 @@ class chef(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=15)
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=128)
     image = models.ImageField(upload_to='chef_images/')
     specialty = models.CharField(max_length=100, blank=True, null=True)
 

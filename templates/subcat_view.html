@@ -28,6 +28,7 @@
 					<th>Subcategory Name</th>
 					<th>Price</th>
 					<th>Offer Price</th>
+					<th>Tax %</th>
 					<th>Description</th>
 					<th>Available</th>
 					<th>Action</th>
@@ -49,6 +50,7 @@
 					<td style="font-weight:500;">{{ subcat.name }}</td>
 					<td>{% if subcat.price %}£{{ subcat.price }}{% else %}-{% endif %}</td>
 					<td>{% if subcat.offer_price %}£{{ subcat.offer_price }}{% else %}-{% endif %}</td>
+					<td>{{ subcat.tax_percentage }}%</td>
 					<td style="max-width:200px; word-break:break-word;">{{ subcat.description }}</td>
 					<td>
 						<form method="post" action="{% url 'toggle_subcat_availability' subcat.id %}" style="display:inline;">
@@ -63,8 +65,8 @@
 								{% if subcat.vat_status == 'include' %}btn-primary
 								{% elif subcat.vat_status == 'vatl_include' %}btn-info
 								{% else %}btn-secondary{% endif %}">
-								{% if subcat.vat_status == 'include' %}VAT include
-								{% elif subcat.vat_status == 'vatl_include' %}VATL include
+								{% if subcat.vat_status == 'include' %}Tax include
+								{% elif subcat.vat_status == 'vatl_include' %}Tax line include
 								{% else %}Not include{% endif %}
 							</button>
 						</form>

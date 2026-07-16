@@ -65,7 +65,7 @@
 							<h4 class="mb-3">Cart Summary</h4>
 							<p class="mb-2">Total Items: {{ cart_data.cart|length }}</p>
 							<p class="mb-2">Subtotal: <span class="fw-bold">{{ cart_data.total|money:currency }}</span></p>
-							<p class="mb-2">VAT (20%): <span class="fw-bold">{{ cart_data.vat|money:currency }}</span></p>
+							<p class="mb-2">Tax: <span class="fw-bold">{{ cart_data.vat|money:currency }}</span></p>
 							<p class="mb-2">Total Payment: <span class="fw-bold fs-5 text-success">{{ cart_data.grand_total|money:currency }}</span></p>
 							<form method="post" action="{% url 'place_order' %}">
 								{% csrf_token %}

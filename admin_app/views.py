@@ -80,6 +80,9 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
+from django.contrib.auth.hashers import make_password
+from captcha.helpers import captcha_image_url
+from captcha.models import CaptchaStore
 from hotel.models import GalleryImage
 from hotel.models import HeroImage
 from hotel.models import News
@@ -179,20 +182,62 @@ def admin_gallery_delete(request, id):
 def load_admin_app(request):
     return HttpResponse("Admin App Loaded Successfully")
 
+
+def _get_captcha_context():
+    captcha_key = CaptchaStore.generate_key()
+    return {
+        'captcha_key': captcha_key,
+        'captcha_image_url': captcha_image_url(captcha_key),
+    }
+
+
+def _is_captcha_valid(captcha_key, captcha_value):
+    if not captcha_key or not captcha_value:
+        return False
+    return CaptchaStore.objects.filter(
+        hashkey=captcha_key,
+        response=captcha_value.strip().lower(),
+    ).exists()
+
 def register(request):
+    context = _get_captcha_context()
     if request.method == 'POST':
         name = request.POST.get('fullname')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        captcha_key = request.POST.get('captcha_key')
+        captcha_value = request.POST.get('captcha')
         image = request.FILES.get('photo')
         is_team = False
+        if password != confirm_password:
+            context['error'] = 'Passwords do not match.'
+            context.update(_get_captcha_context())
+            return render(request, 'register.html', context)
+        if not _is_captcha_valid(captcha_key, captcha_value):
+            context['error'] = 'Invalid CAPTCHA. Please try again.'
+            context.update(_get_captcha_context())
+            return render(request, 'register.html', context)
+        if userdetails.objects.filter(email=email).exists():
+            context['error'] = 'User with this email already exists.'
+            context.update(_get_captcha_context())
+            return render(request, 'register.html', context)
         if email == "sandra@bjsm.co.in":
             is_team = True
-        user = userdetails(name=name, email=email, phone=phone, password=password, image=image, is_team=is_team)
+        user = userdetails(
+            name=name,
+            email=email,
+            phone=phone,
+            password=make_password(password),
+            image=image,
+            is_team=is_team,
+        )
         user.save()
-        return render(request, 'register.html', {'success': True})
-    return render(request, 'register.html')
+        context = {'success': True}
+        context.update(_get_captcha_context())
+        return render(request, 'register.html', context)
+    return render(request, 'register.html', context)
 
 def user_view(request):
     users = userdetails.objects.all()
@@ -216,7 +261,7 @@ def user_update(request, id):
         user.name = request.POST.get('fullname')
         user.email = request.POST.get('email')
         user.phone = request.POST.get('phone')
-        user.password = request.POST.get('password')
+        user.password = make_password(request.POST.get('password'))
         if 'photo' in request.FILES:
             user.image = request.FILES['photo']
         user.save()
@@ -379,6 +424,7 @@ def subcategory_view(request):
         item_image = request.FILES.get('subcategory_image')
         item_price = request.POST.get('subcategory_price')
         offer_price = request.POST.get('offer_price')
+        tax_percentage = request.POST.get('tax_percentage')
         description = request.POST.get('description')
         if category_id and item_name and item_price:
             cat = Category.objects.get(id=category_id)
@@ -387,6 +433,7 @@ def subcategory_view(request):
                 name=item_name,
                 price=item_price,
                 offer_price=offer_price if offer_price else None,
+                tax_percentage=tax_percentage if tax_percentage else 0,
                 description=description if description else None
             )
             if item_image:
@@ -425,6 +472,7 @@ def subcat_update(request, id):
         subcat.name = request.POST.get('subcategory_name')
         subcat.price = request.POST.get('subcategory_price')
         subcat.offer_price = request.POST.get('offer_price') if hasattr(subcat, 'offer_price') else None
+        subcat.tax_percentage = request.POST.get('tax_percentage') or 0
         category_id = request.POST.get('category')
         if category_id:
             subcat.category = Category.objects.get(id=category_id)
@@ -474,25 +522,37 @@ def reservation_delete(request, id):
 
 def chef_register(request):
     from .models import chef
-    success = False
-    error = None
+    context = _get_captcha_context()
+    context.update({'success': False, 'error': None})
     if request.method == 'POST':
         name = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        captcha_key = request.POST.get('captcha_key')
+        captcha_value = request.POST.get('captcha')
         image = request.FILES.get('image')
         specialty = request.POST.get('specialty')
         if password != confirm_password:
-            error = "Passwords do not match."
+            context['error'] = "Passwords do not match."
+        elif not _is_captcha_valid(captcha_key, captcha_value):
+            context['error'] = "Invalid CAPTCHA. Please try again."
         elif chef.objects.filter(email=email).exists():
-            error = "Chef with this email already exists."
+            context['error'] = "Chef with this email already exists."
         else:
-            chef_obj = chef(name=name, email=email, phone=phone, password=password, image=image, specialty=specialty)
+            chef_obj = chef(
+                name=name,
+                email=email,
+                phone=phone,
+                password=make_password(password),
+                image=image,
+                specialty=specialty,
+            )
             chef_obj.save()
-            success = True
-    return render(request, 'chef_register.html', {'success': success, 'error': error})
+            context['success'] = True
+        context.update(_get_captcha_context())
+    return render(request, 'chef_register.html', context)
 
 def our_chef(request):
     from .models import chef
@@ -531,7 +591,7 @@ def chef_update(request, id):
             chef_obj.email = email
             chef_obj.phone = phone
             if password:
-                chef_obj.password = password
+                chef_obj.password = make_password(password)
             if image:
                 chef_obj.image = image
             chef_obj.save()

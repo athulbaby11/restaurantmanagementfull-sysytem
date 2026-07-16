@@ -46,3 +46,41 @@ python manage.py runserver
 - The project uses SQLite by default.
 - Media files are stored under the `media/` folder.
 - Currency selection is handled from the admin header.
+
+## Database Backup (Every 8 Hours)
+
+### Manual backup
+
+Run this from project root:
+
+```bash
+python manage.py backup_db --output-dir backups --keep 90
+```
+
+- Backup files are created in `backups/`.
+- Latest 90 backups are kept automatically.
+
+### Automatic backup on Windows Task Scheduler
+
+The project includes:
+
+- `scripts/backup_db.ps1`
+- A Windows wrapper batch file: `C:\Users\athul\run_hotel_backup.bat`
+
+Wrapper content:
+
+```powershell
+python manage.py backup_db --output-dir backups --keep 90
+```
+
+Create task (run once in PowerShell):
+
+```powershell
+schtasks /Create /TN "Hotel DB Backup Every 8 Hours" /SC HOURLY /MO 8 /TR "C:\Users\athul\run_hotel_backup.bat" /F
+```
+
+Check task:
+
+```powershell
+schtasks /Query /TN "Hotel DB Backup Every 8 Hours" /V /FO LIST
+```

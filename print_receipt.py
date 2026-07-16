@@ -59,8 +59,10 @@ def print_receipt(order, printer_type='usb', usb_params=None, network_ip=None, p
 
     p.text('-' * char_width + '\n')
     p.text('{:<24}{:>7.2f}\n'.format('Subtotal:', order['subtotal']))
-    if 'vat' in order:
-        p.text('{:<24}{:>7.2f}\n'.format('VAT (20%):', order['vat']))
+    if 'tax' in order:
+        p.text('{:<24}{:>7.2f}\n'.format('Tax (20%):', order['tax']))
+    elif 'vat' in order:
+        p.text('{:<24}{:>7.2f}\n'.format('Tax (20%):', order['vat']))
     p.text('{:<24}{:>7.2f}\n'.format('Grand Total:', order['grand_total']))
     p.text('-' * char_width + '\n')
 

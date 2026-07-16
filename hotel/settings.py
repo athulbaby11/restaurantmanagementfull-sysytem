@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user_app',
     'hotel',
     'Chef_app',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -137,4 +138,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ADMIN_LOGIN_EMAIL = 'admin@gmail.com'
+ADMIN_LOGIN_PASSWORD_HASH = 'pbkdf2_sha256$1000000$mtWxBamLrAEKWV9RbErm6v$PEjFoIGGUomKoNP231dhZH39GUKs9GYe7Z0+Fwyx5vM='
 

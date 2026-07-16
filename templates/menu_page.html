@@ -85,6 +85,11 @@
                                             {% endif %}
                                             {% endwith %}
                                         </div>
+                                        {% if subcat.vat_status == 'include' and subcat.tax_percentage > 0 %}
+                                        <div class="text-center mb-2">
+                                            <small class="badge bg-info">Tax: {{ subcat.tax_percentage }}%</small>
+                                        </div>
+                                        {% endif %}
                                         <hr class="my-2 stylish-hr">
                                         <div class="d-flex align-items-center justify-content-center mb-2">
                                             <label class="me-2 mb-0">Qty:</label>

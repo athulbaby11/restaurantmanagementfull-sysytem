@@ -84,6 +84,10 @@
 							<input type="number" step="0.01" class="form-control" id="offer_price" name="offer_price" value="{{ subcat.offer_price }}">
 						</div>
 						<div class="mb-3">
+							<label for="tax_percentage" class="form-label">Tax Percentage (%)</label>
+							<input type="number" step="0.01" min="0" class="form-control" id="tax_percentage" name="tax_percentage" value="{{ subcat.tax_percentage|default:'0' }}">
+						</div>
+						<div class="mb-3">
 							<label for="description" class="form-label">Description (max 60 words)</label>
 							<textarea class="form-control" id="description" name="description" rows="3" maxlength="420" placeholder="Enter description (max 60 words)">{{ subcat.description }}</textarea>
 						</div>

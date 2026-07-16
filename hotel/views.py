@@ -1,10 +1,40 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth.hashers import check_password, make_password
 from .currency import DEFAULT_CURRENCY, normalize_currency
 
 
 def _is_logged_in_user(request):
     return request.session.get('user') == 'user'
+
+
+def _calculate_user_cart_totals(user_cart):
+    from admin_app.models import SubCategory
+
+    grand_total = 0
+    vat = 0
+    subcat_ids = []
+
+    for subcat_id, item in user_cart.items():
+        item['total'] = round(item['price'] * item['qty'], 2)
+        item['subcat_id'] = subcat_id
+        grand_total += item['total']
+        subcat_ids.append(subcat_id)
+
+    subcat_map = {
+        str(subcat.id): subcat
+        for subcat in SubCategory.objects.filter(id__in=subcat_ids).only('id', 'vat_status', 'tax_percentage')
+    }
+
+    for subcat_id, item in user_cart.items():
+        subcat = subcat_map.get(str(subcat_id))
+        if subcat and subcat.vat_status == 'include':
+            rate = float(subcat.tax_percentage or 0)
+            if rate > 0:
+                vat += item['total'] * (rate / 100)
+
+    return round(grand_total, 2), round(vat, 2)
 
 @csrf_exempt
 def user_checkout(request):
@@ -12,12 +42,7 @@ def user_checkout(request):
     if not _is_logged_in_user(request):
         return redirect('menu_page')
     user_cart = request.session.get('user_cart', {})
-    grand_total = 0
-    for subcat_id, item in user_cart.items():
-        item['total'] = round(item['price'] * item['qty'], 2)
-        item['subcat_id'] = subcat_id
-        grand_total += item['total']
-    vat = round(grand_total * 0.20, 2)
+    grand_total, vat = _calculate_user_cart_totals(user_cart)
     delivery_charge = 0  # Placeholder, add logic for distance
     grand_total_with_vat = round(grand_total + vat + delivery_charge, 2)
     if request.method == 'POST':
@@ -26,12 +51,7 @@ def user_checkout(request):
         phone = request.POST.get('phone')
         payment_method = request.POST.get('payment_method')
         user_cart = request.session.get('user_cart', {})
-        grand_total = 0
-        for subcat_id, item in user_cart.items():
-            item['total'] = round(item['price'] * item['qty'], 2)
-            item['subcat_id'] = subcat_id
-            grand_total += item['total']
-        vat = round(grand_total * 0.20, 2)
+        grand_total, vat = _calculate_user_cart_totals(user_cart)
         delivery_charge = 0  # Placeholder, add logic for distance
         grand_total_with_vat = round(grand_total + vat + delivery_charge, 2)
         order_id = f"ORD{int(timezone.now().timestamp())}"  # Simple unique order id
@@ -181,19 +201,33 @@ def index(request):
         'news_items': news_items
     })
 
+
+def _password_matches_and_upgrade(model_obj, raw_password):
+    if not model_obj or not raw_password:
+        return False
+    if check_password(raw_password, model_obj.password):
+        return True
+    if model_obj.password == raw_password:
+        model_obj.password = make_password(raw_password)
+        model_obj.save(update_fields=['password'])
+        return True
+    return False
+
 def login(request):
     if request.method == "POST":
         usermail = request.POST.get("usermail")
         userpassword = request.POST.get("userpassword")
-        if usermail == 'admin@gmail.com' and userpassword == 'admin':
+        if (
+            usermail == settings.ADMIN_LOGIN_EMAIL
+            and check_password(userpassword, settings.ADMIN_LOGIN_PASSWORD_HASH)
+        ):
             request.session['email'] = usermail
             request.session['name'] = 'admin'
             return redirect('admin_dashboard')
         elif usermail and userpassword:
             from admin_app.models import userdetails, chef
-            # Try login by email and password (userdetails)
-            if userdetails.objects.filter(email=usermail, password=userpassword).exists():
-                user_obj = userdetails.objects.get(email=usermail, password=userpassword)
+            user_obj = userdetails.objects.filter(email=usermail).first()
+            if _password_matches_and_upgrade(user_obj, userpassword):
                 if user_obj.is_team:
                     request.session['tid'] = user_obj.id
                     request.session['tname'] = user_obj.name
@@ -208,31 +242,14 @@ def login(request):
                     request.session['user'] = 'user'
                     request.session['email'] = user_obj.email  # For profile_view compatibility
                     return render(request, 'index.html', {'status': 'user login success'})
-            # Try login by chef email and password
-            elif chef.objects.filter(email=usermail, password=userpassword).exists():
-                chef_obj = chef.objects.get(email=usermail, password=userpassword)
+            chef_obj = chef.objects.filter(email=usermail).first()
+            if _password_matches_and_upgrade(chef_obj, userpassword):
                 request.session['cid'] = chef_obj.id
                 request.session['cname'] = chef_obj.name
                 request.session['cemail'] = chef_obj.email
                 request.session['user'] = 'chef'
                 request.session['email'] = chef_obj.email
                 return redirect('chef_dashboard')
-            # Try login by name and email (no password)
-            elif userdetails.objects.filter(name=usermail, email=userpassword).exists():
-                user_obj = userdetails.objects.get(name=usermail, email=userpassword)
-                if user_obj.is_team:
-                    request.session['tid'] = user_obj.id
-                    request.session['tname'] = user_obj.name
-                    request.session['temail'] = user_obj.email
-                    request.session['user'] = 'team'
-                    request.session['email'] = user_obj.email
-                    return redirect('team_dashboard')
-                request.session['uid'] = user_obj.id
-                request.session['uname'] = user_obj.name
-                request.session['uemail'] = user_obj.email
-                request.session['user'] = 'user'
-                request.session['email'] = user_obj.email
-                return render(request, 'index.html', {'status': 'user login success'})
         return render(request, 'login.html', {'status': 'login failed'})
     return render(request, "login.html")
 
@@ -292,13 +309,7 @@ def user_cart(request):
     if not _is_logged_in_user(request):
         return redirect('menu_page')
     user_cart = request.session.get('user_cart', {})
-    # Add total for each item
-    grand_total = 0
-    for subcat_id, item in user_cart.items():
-        item['total'] = round(item['price'] * item['qty'], 2)
-        item['subcat_id'] = subcat_id
-        grand_total += item['total']
-    vat = round(grand_total * 0.20, 2)
+    grand_total, vat = _calculate_user_cart_totals(user_cart)
     grand_total_with_vat = round(grand_total + vat, 2)
     return render(request, 'user_cart.html', {
         'user_cart': user_cart,

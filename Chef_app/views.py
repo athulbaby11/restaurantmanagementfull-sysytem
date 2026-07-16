@@ -16,7 +16,9 @@ def cheforder_deliver(request, id):
             item_price = item.total
             subtotal += item_price
             if subcat and subcat.vat_status == 'include':
-                gst += item_price * 0.2
+                rate = float(subcat.tax_percentage or 0)
+                if rate > 0:
+                    gst += item_price * (rate / 100)
         total = subtotal + gst
         ChefDeliveredOrder.objects.create(
             order_id=order.id,
@@ -165,7 +167,9 @@ def cheforder_delivered(request, id):
             item_price = item.total
             subtotal += item_price
             if subcat and subcat.vat_status == 'include':
-                gst += item_price * 0.2
+                rate = float(subcat.tax_percentage or 0)
+                if rate > 0:
+                    gst += item_price * (rate / 100)
         total = subtotal + gst
         # Save to ChefDeliveredOrder
         ChefDeliveredOrder.objects.create(
@@ -192,8 +196,19 @@ def cheforder_delivered(request, id):
     orders_with_amount = []
     for dorder in delivered_orders:
         items = dorder.items.all()
-        subtotal = sum([item.total for item in items])
-        gst = subtotal * 0.2
+        subtotal = 0
+        gst = 0
+        for item in items:
+            try:
+                subcat = SubCategory.objects.get(name=item.name)
+            except SubCategory.DoesNotExist:
+                subcat = None
+            item_price = item.total
+            subtotal += item_price
+            if subcat and subcat.vat_status == 'include':
+                rate = float(subcat.tax_percentage or 0)
+                if rate > 0:
+                    gst += item_price * (rate / 100)
         total = subtotal + gst
         orders_with_amount.append({
             'id': dorder.id,
@@ -270,15 +285,15 @@ def chef_online_order_revenue(request):
     subtotal_amount = decimal.Decimal('0.0')
     subtotal_gst = decimal.Decimal('0.0')
     for order in orders:
-        gst = order.total_price * decimal.Decimal('0.2')
-        total = order.total_price + gst
-        subtotal_amount += order.total_price
+        gst = order.vat
+        total = order.total_price
+        subtotal_amount += order.price
         subtotal_gst += gst
         total_revenue += total
         online_orders.append({
             'id': order.id,
             'order_time': order.order_time,
-            'total_price': order.total_price,
+            'total_price': order.price,
             'gst': gst,
             'total': total,
         })
